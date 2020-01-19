@@ -6,3 +6,9 @@ Home page:
 
 Session-authentication:
 ![alt text](https://github.com/dabitk/LuxResort/blob/master/session_login.gif "Session Auth")
+
+Reservation system:
+![alt text](https://github.com/dabitk/LuxResort/blob/master/reservation_system.gif "Reservation System")
+
+Hierarchical BBS:
+![alt text](https://github.com/dabitk/LuxResort/blob/master/hierarchical_bbs.gif "Bbs")
