@@ -241,8 +241,20 @@
   		<div class="navbar-top--left"></div>
   		<div class="navbar-top--right">
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
-  			<a class="navbar-top-LOGIN" href="#">LOG IN</a>
-  			<a class="navbar-top-REGISTER" href="#">REGISTER</a>
+  			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
+  			<c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
+		  				LOG OUT
+		  			</a>  				
+  				</c:when>
+  				<c:otherwise>
+  					<a class="navbar-top-LOGIN" href="member_login.jsp">
+		  				LOG IN
+		  			</a>
+  				</c:otherwise>
+  			</c:choose>
+  			<a class="navbar-top-REGISTER" href="member_register.jsp">REGISTER</a>
 	        <li class="nav-item dropdown" style="display:inline-block; list-style-type: none; text-color: gray">
 	          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
@@ -309,13 +321,13 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="#">레스토랑</span></a>
+		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">바&라운지</a>
+		        <a class="nav-link"  href="b_02.jsp">바&라운지</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link "  href="#">베이커리</a>
+		        <a class="nav-link "  href="b_03.jsp">베이커리</a>
 		      </li>
 		    </ul>		   		
 		</div>
@@ -323,16 +335,14 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="#">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">온천</a>
+		        <a class="nav-link"  href="c_02.jsp">스파</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link" href="#">피트니스</a>
+		        <a class="nav-link" href="c_03.jsp">대연회장</a>
 		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="#">대연회장</a>
 		    </ul>		   		
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">

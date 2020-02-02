@@ -13,7 +13,10 @@
   <meta name="author" content="dabitk">
   <script src="https://kit.fontawesome.com/c0559a0b41.js" crossorigin="anonymous"></script>
   <title>럭셔리조트에 오신것을 환영합니다!</title>
-
+  
+  <!-- 카카오 OAuth API -->
+  <script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+  
   <!-- 정후 커스텀: T맵 API -->
   <script script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appkey=l7xxdf613ea839e844f09766f70c6562a462"></script>
 
@@ -32,8 +35,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <!-- Custom styles for this template -->
   <link href="css/agency.min.css" rel="stylesheet">
-  <!-- ckeditor 가져옴 -->
-  <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
   
   <style>
   <!-- 공지게시판용 style -->
@@ -140,7 +141,7 @@
 		font-family:'FontAwesome'!important;
 	}
 	.centered{
-	    background-image: url(img/notice.jpg);
+	    background-image: url(img/member.jpg);
 	    background-size: cover;
 		text-align:center;
 	    color: white;
@@ -211,43 +212,36 @@
 			  	$('#navbarResponsive3').removeClass("show");
 			  	$('#navbarResponsive4').removeClass("show");
 			  	$('#navbarResponsive5').removeClass("show");			    
-			 });			  
-	});	 
+			 });
+			$("#loginBtn").on("click",function(){
+				$.ajax({
+					url:"member_loginck.jsp",
+					data:{
+						email: $('input[name="email"]').val(),
+						password: $('input[name="password"]').val()},
+					type:"POST", //HTTP 요청 방식
+					dataType:"json" //서버에서 보내줄 데이터의 타입
+					}).done(function(json){
+						console.log(json);
+						if(json.login_ok === 1){
+							alert("로그인 되었습니다.");
+							window.location.replace("./index.jsp");
+						}else{
+							alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+							$('input[name="email"]').val("");
+							$('input[name="password"]').val("");
+						}
+					});
+				});
+			});			 			  
+
+
+	 
   </script>
 </head>
 
 <body id="page-top">
-<%
-	gongiiDAO bbs = gongiiDAO.getInstance(); //싱글턴으로 객체 생성.
-	request.setCharacterEncoding("utf-8");
-	String key = request.getParameter("key");
-	String title = request.getParameter("title");
-	String content = request.getParameter("content");
-	int rootid = (request.getParameter("rootid") == null) ? 0 : Integer.parseInt(request.getParameter("rootid"));
-	int relevel = (request.getParameter("relevel") == null) ? 0 : Integer.parseInt(request.getParameter("relevel"));
-	int recnt = (request.getParameter("recnt")==null) ? 0 : Integer.parseInt(request.getParameter("recnt"));
-	System.out.println("입력되는 rootid: "+ rootid + ", relevel: "+ relevel+", recnt: "+recnt);
-	int errorcode =0;
-	gongiiVO article;
-	//새글을 씀 key=INSERT
-	//수정 key=글번호
-	
-	if(key.equals("INSERT")){
-		errorcode=bbs.insertArticle(title,content,rootid,relevel,recnt);
-		article = bbs.getArticle();
-		if(relevel==0){ //원글인 경우, rootid값은 id와 같아야 하기 때문에 테이블 삽입 후 별도의 update가 필요.
-			bbs.updateWonGul(article.getId());
-			article=bbs.getArticle(); //마지막으로 삽입된 레코드를 가져와서 화면에 출력한다.
-		}
-	}else{
-		int id = Integer.parseInt(key);
-		errorcode = bbs.updateArticle(id, title, content); //DB레코드 수정 쿼리 수행 메소드
-		article = bbs.getArticle(id);	//id와 일치하는 레코드를 가져와서 화면에 출력한다
-	}
-	pageContext.setAttribute("key",key);
-	pageContext.setAttribute("errorcode", errorcode);
-	pageContext.setAttribute("article",article);
-%>
+
   <!-- Navigation -->
   <!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">-->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top shrink" id="mainNav">
@@ -349,7 +343,7 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="c_01.jsp">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="c_02.jsp">스파</a>
@@ -363,7 +357,7 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
+		        <a class="nav-link"  href="d_01.jsp">예약상황</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
@@ -390,68 +384,89 @@
   <section class="page-section" id="services">
      
     <div class="centered">
-    	<h1 style="margin-top:50px">공지사항</h1>
+    	<h1 style="margin-top:50px">멤버 로그인</h1>
     </div>
     <div class="container">
       <div class="row">
       	<div class="col-lg-12 text-center">
-      	<c:choose>
-      		<c:when test="${key ne 'INSERT'}">
-      			<p><c:out value="${article.getId()}"/>번 글이 다음과 같이 수정되었습니다.</p>
-      		</c:when>
-      		<c:otherwise>
-      			<p>다음 내용이 공지사항 게시판에 추가되었습니다.</p>
-      		</c:otherwise>
-      	</c:choose>
+      	<p>회원 로그인 페이지 입니다.<p>
       	</div>
         <div class="col-lg-12 text-center gongii-Board">        
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
-		<c:choose>
-			<c:when test="${article ne null && !empty sessionScope.login_ok}">
-				<!-- DB로부터 게시글을 성공적으로 가져왔고 관리자 로그인 상태인 경우에만 실행 -->
-				<div>
-					<FORM method="POST" style="text-align:left">
-					<table align=center width=800 cellspacing=1 border=1>
-					<TR>
-					<th>번호</th>
-					<td><input type="number" name="key" value='<c:out value="${article.getId()}"/>' readonly/></td>		
-					</TR>
-					<TR>
-					<th>제목</th>
-					<td><input type="text" name="title" value='<c:out value="${article.getTitle()}"/>' maxlength="70" autocomplete=off readonly/></td>		
-					</TR>			
-					<TR>
-					<th>일자</th>
-					<td><c:out value="${article.getDate()}"/></td>		
-					</TR>
-					<TR>
-					<th>내용</th>
-					<td>
-						<textarea name="content" cols="80" rows="30" maxlength="1500" readonly><c:out value="${article.getContent()}"/>
-						</textarea>
-					<script>
-						CKEDITOR.plugins.addExternal( 'filebrowser', '/myplugins/abbr/', 'plugin.js' );
-	                  	CKEDITOR.replace( 'content' ,{
-							height:'100%',
-							width:'100%',
-						    resize_dir: 'none'
-	                    });
-	             	</script>						
-					</td>		
-					</TR>						
-					</table>
-					<span>
-						<a href="e_01.jsp" class="btn btn-primary btn-lg rippler rippler-inverse">목록으로</a>
-					</span>		
-					</FORM>
-				</div>
-			</c:when>
-			<c:otherwise>
-			<%--article이 null인 경우 이하 코드 실행--%>
-				<%response.sendError(500); //만약 에러가 발생하면 500에러를 발생시킴%>
-			</c:otherwise>
-		</c:choose>		
+        <div class="card text-center card  bg-default mb-3" style="display:inline-block; width:60%">
+          <div class="card-header">
+            멤버 로그인
+          </div>
+          <FORM method="POST" id="logingForm">
+          <div class="card-body">
+               <input type="text" name="email" class="form-control input-sm chat-input" placeholder="아이디" />
+            </br>
+            	<input type="password" name="password" class="form-control input-sm chat-input" placeholder="비밀번호" />
+          </div>
+          <div class="card-footer text-muted">
+          	<button id="loginBtn" class="btn btn-secondary" >로그인</button>
+          </div>
+          </FORM>
+        </div>		
         </div>
+        <div class="col-lg-12 text-center">
+			<a id="custom-login-btn" href="javascript:loginWithKakao()">
+				<img src="//mud-kage.kakao.com/14/dn/btqbjxsO6vP/KPiGpdnsubSq3a0PHEGUK1/o.jpg" width="300"/>
+			</a>
+			<script type='text/javascript'>
+			  //<![CDATA[
+			    // 사용할 앱의 JavaScript 키를 설정해 주세요.
+			    Kakao.init('bd7797bf8cc3636f6be46fe70afdeec7');
+			    function loginWithKakao() {
+			      // 로그인 창을 띄웁니다.
+			      Kakao.Auth.login({
+			        success: function(authObj) {
+				       Kakao.API.request({
+					       url:'/v1/user/me',
+						   success:function(res){
+							   login(res);
+							   alert(JSON.stringify(res)); //JSON형태의 결과값 alert로 띄우기
+							   //alert(JSON.stringify(authObj));
+							   console.log(res.id); //콘솔 로그에 id정보 출력
+							   console.log(res.kaccount_email); //콘솔 로그에 이메일 정보 출력
+							   console.log(res.properties['nickname']); //콘솔 로그에 닉네임 출력
+							   console.log(authObj.access_token); //콘솔 로그에 토큰값 출력
+								
+							   }
+					       }) 
+			          alert(JSON.stringify(authObj));
+			        },
+			        fail: function(err) {
+			          alert(JSON.stringify(err));
+			        }
+			      });			      
+			    };
+
+				function login(res){
+						$.ajax({
+								url:"aa.jsp", //클라이언트가 요청을 보낼 서버의 URL 주소
+								data: res,
+									
+								type:"POST", //HTTP 요청 방식
+								dataType:"json" //서버에서 보내줄 데이터의 타입
+							})
+							//HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
+							.done(function(json){
+								console.log(json);
+								if(json.dupExists != 0){
+									$("#numOfNights").val(1); //숙박일수를 1로 초기화한다.
+									alert("중복된 예약이 있습니다. 다른 날짜 또는 숙박일수를 선택해 주십시오.");
+								}
+							});
+					 };	
+			  //]]>
+			</script>			
+		</div>
+		<div class="col-lg-12 text-center" style="margin-top:10px">
+			<a id="custom-login-btn" href="#">
+				<img src="img/Naver_Green.PNG" width="300"/>
+			</a>
+		</div>        
       </div>
     </div>
   </section>

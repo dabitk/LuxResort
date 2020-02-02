@@ -156,6 +156,7 @@
 
   </style>
   <script>
+  
 	  function getTime(){
 		    const date = new Date();
 			const current_year = date.getFullYear();
@@ -209,7 +210,7 @@
 			  	$('#navbarResponsive3').removeClass("show");
 			  	$('#navbarResponsive4').removeClass("show");
 			  	$('#navbarResponsive5').removeClass("show");			    
-			 });			  
+			 });	 			  
 	});	 
   </script>
 </head>
@@ -217,7 +218,7 @@
 <body id="page-top">
 <%
 	reservationDAO resv = reservationDAO.getInstance(); //싱글턴으로 객체 생성.
-	List<calendarVO> resv_list = new ArrayList<calendarVO>();
+	List<reservationVO> resv_list = new ArrayList<>();
 	request.setCharacterEncoding("utf-8");
 	
 	String loginOK=null;
@@ -230,7 +231,7 @@
 	}else if(!loginOK.equals("yes")){
 		response.sendRedirect(jumpURL_Fail);
 	}else{
-		resv_list=resv.getBookingInfo();	//첫번째 행부터 15개를 DB로부터 가져온다
+		resv_list=resv.getBookingInfo_Admin();	//첫번째 행부터 15개를 DB로부터 가져온다
 	}
 	pageContext.setAttribute("resv_list",resv_list); //페이지 컨텍스트에 list 속성을 지정한다
 %>
@@ -241,8 +242,20 @@
   		<div class="navbar-top--left"></div>
   		<div class="navbar-top--right">
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
-  			<a class="navbar-top-LOGIN" href="#">LOG IN</a>
-  			<a class="navbar-top-REGISTER" href="#">REGISTER</a>
+  			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
+  			<c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
+		  				LOG OUT
+		  			</a>  				
+  				</c:when>
+  				<c:otherwise>
+  					<a class="navbar-top-LOGIN" href="member_login.jsp">
+		  				LOG IN
+		  			</a>
+  				</c:otherwise>
+  			</c:choose>
+  			<a class="navbar-top-REGISTER" href="member_register.jsp">REGISTER</a>
 	        <li class="nav-item dropdown" style="display:inline-block; list-style-type: none; text-color: gray">
 	          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
@@ -309,13 +322,13 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="#">레스토랑</span></a>
+		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">바&라운지</a>
+		        <a class="nav-link"  href="b_02.jsp">바&라운지</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link "  href="#">베이커리</a>
+		        <a class="nav-link "  href="b_03.jsp">베이커리</a>
 		      </li>
 		    </ul>		   		
 		</div>
@@ -323,16 +336,14 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link  href="#">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">온천</a>
+		        <a class="nav-link"  href="c_02.jsp">스파</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link" href="#">피트니스</a>
+		        <a class="nav-link" href="c_03.jsp">대연회장</a>
 		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="#">대연회장</a>
 		    </ul>		   		
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -375,53 +386,31 @@
       	</div>
         <div class="col-lg-12 text-center gongii-Board">        
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
-				<c:choose>
-					<c:when test="${!resv_list.isEmpty()}">
-						<table align=center width=800 cellspacing=1 border=1>
-							<TR><TH class="calendr">일자</TH><TH class="room1">1번 객실</TH><TH class="room2">2번 객실</TH><TH class="room3">3번 객실</TH></TR>
-							<c:forEach var="a" items="${resv_list}">
-							<TR>
-								<!-- room1, room2, room3은 예약가능일 때만 클릭이 가능 -->
-								<TD class="calendr"><c:out value="${a.calendr}"/></TD>				
-								<c:choose>
-									<c:when test="${a.room1 ne '예약가능'}">
-										<TD class="room1"><c:out value="${a.room1}"/></TD>
-									</c:when>
-									
-									<c:otherwise>
-										<TD class="room1"><a href="d_02.jsp?room=1&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room1}"/></a></TD>
-									</c:otherwise>								
-								</c:choose>
-								<c:choose>
-									<c:when test="${a.room2 ne '예약가능'}">
-										<TD class="room2"><c:out value="${a.room2}"/></TD>
-									</c:when>
-									<c:otherwise>
-										<TD class="room2"><a href="d_02.jsp?room=2&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room2}"/></a></TD>
-									</c:otherwise>								
-								</c:choose>
-								<c:choose>
-									<c:when test="${a.room3 ne '예약가능'}">
-										<TD class="room3"><c:out value="${a.room3}"/></TD>
-									</c:when>
-									<c:otherwise>
-										<TD class="room3"><a href="d_02.jsp?room=3&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room3}"/></a></TD>
-									</c:otherwise>								
-								</c:choose>										
-							</TR>
-							</c:forEach>
-						</table>
-					</c:when>
-					<c:otherwise>
-						<%//response.sendError(500); //만약 에러가 발생하여 예약현황 출력이 안되는 경우는 500에러를 발생시킴.%>
-						<h1>ERROR!</h1>
-					</c:otherwise>			
-				</c:choose>
+			<c:choose>
+				<c:when test="${!resv_list.isEmpty()}">
+					<table align=center width=800 cellspacing=1 border=1 style="text-align:left;border-left:none;border-right:none;">
+						<TR><TH>예약일</TH><TH>객실</TH><TH>성명</TH><TH>등록일</TH><TH>입금자명</TH><TH>진행상태</TH><TH>코멘트</TH></TR>
+						<c:forEach var="article" items="${resv_list}">
+						<TR>
+							<TD><a id="resv_Info" href='admin_oneview.jsp?checkin=<c:out value="${article.resv_date}"/>&room=<c:out value="${article.room}"/>'><c:out value="${article.resv_date}"/></a></TD>
+							<TD><c:out value="${article.room}"/></TD>
+							<TD><c:out value="${article.name}"/></TD>
+							<TD><c:out value="${article.write_date}"/></TD>
+							<TD><c:out value="${article.in_name}"/></TD>
+							<TD><c:out value="${article.processing}"/></TD>
+							<TD><c:out value="${article.comment}"/></TD>
+						</TR>
+						</c:forEach>
+					</table>
+				</c:when>
+				<c:otherwise>
+					<%response.sendError(500); //만약 에러가 발생하여 예약현황 출력이 안되는 경우는 500에러를 발생시킴.%>
+				</c:otherwise>			
+			</c:choose>
         </div>
       </div>
     </div>
   </section>
-
 
   <!-- Contact -->
   <section class="page-section" id="contact">

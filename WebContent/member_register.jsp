@@ -32,8 +32,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <!-- Custom styles for this template -->
   <link href="css/agency.min.css" rel="stylesheet">
-  <!-- ckeditor 가져옴 -->
-  <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
   
   <style>
   <!-- 공지게시판용 style -->
@@ -140,7 +138,7 @@
 		font-family:'FontAwesome'!important;
 	}
 	.centered{
-	    background-image: url(img/notice.jpg);
+	    background-image: url(img/member.jpg);
 	    background-size: cover;
 		text-align:center;
 	    color: white;
@@ -158,6 +156,19 @@
 
   </style>
   <script>
+	  function goPopup(){ //주소 검색 팝업창을 띄우는 메소드.
+			// 호출된 페이지(jusopopup.jsp)에서 실제 주소검색URL(http://www.juso.go.kr/addrlink/addrLinkUrl.do)를 호출하게 됩니다.
+		    var pop = window.open("<%=request.getContextPath()%>/popup/jusoPopup.jsp","pop","width=570,height=420, scrollbars=yes, resizable=yes"); 
+		    
+			// 모바일 웹인 경우, 호출된 페이지(jusopopup.jsp)에서 실제 주소검색URL(http://www.juso.go.kr/addrlink/addrMobileLinkUrl.do)를 호출하게 됩니다.
+		    //var pop = window.open("/popup/jusoPopup.jsp","pop","scrollbars=yes, resizable=yes"); 
+		}
+		/** API 서비스 제공항목 확대 (2017.02) **/
+		function jusoCallBack(roadFullAddr,roadAddrPart1,addrDetail,roadAddrPart2,engAddr, jibunAddr, zipNo, admCd, rnMgtSn, bdMgtSn
+								, detBdNmList, bdNm, bdKdcd, siNm, sggNm, emdNm, liNm, rn, udrtYn, buldMnnm, buldSlno, mtYn, lnbrMnnm, lnbrSlno, emdNo){
+			// 팝업페이지에서 주소입력한 정보를 받아서, 현 페이지에 정보를 등록합니다.
+			document.registerForm.address.value = roadFullAddr;
+		}  
 	  function getTime(){
 		    const date = new Date();
 			const current_year = date.getFullYear();
@@ -176,6 +187,9 @@
 	  		document.getElementById(id2).setAttribute('aria-expanded', 'true');
 		 }
 	  }
+
+	
+	  
 	  $(document).ready(function(){
 		  $("#introduction").click( function () {
 			  	$('#navbarResponsive').attr('data-target','#navbarResponsive2');
@@ -211,43 +225,102 @@
 			  	$('#navbarResponsive3').removeClass("show");
 			  	$('#navbarResponsive4').removeClass("show");
 			  	$('#navbarResponsive5').removeClass("show");			    
-			 });			  
-	});	 
+			 });
+
+		     var idValidFlag = false;
+		     var passValidFlag = false;
+			 
+			 $("#email").on("input",function(){
+				if(ValidateEmail()){
+					$.ajax({
+							url:"member_dupCheckAjax.jsp", //클라이언트가 요청을 보낼 서버의 URL 주소
+							data:{
+								email: $(this).val()
+							},
+							type:"POST", //HTTP 요청 방식
+							dataType:"json" //서버에서 보내줄 데이터의 타입
+						})
+						//HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
+						.done(function(json){
+							console.log(json);
+							if(json.dupExists == 1){
+								$("#idConfirm").html("이미 존재하는 아이디입니다.");
+								$("#idConfirm").css('visibility', 'visible');
+								$("#idConfirm").css('color','red');
+								idValidFlag = false;
+							}else if(json.dupExists == 0){
+								$("#idConfirm").html("사용가능한 아이디입니다.");
+								$("#idConfirm").css('visibility', 'visible');
+								$("#idConfirm").css('color','green');
+								idValidFlag = true;								
+							}
+						});
+			 }else{
+				$("#idConfirm").html("유효하지 않은 이메일입니다");
+				$("#idConfirm").css('visibility', 'visible');
+				$("#idConfirm").css('color','red');
+				idValidFlag = false;
+			}
+			});
+			$("#email").on("focusout",function(){
+				$("#idConfirm").css('visibility', 'hidden');
+			});
+
+			 $("#confirm").on("input",function(){
+				 if($(this).val() === $("#password").val()){
+					$("#passConfirm").html("비밀번호가 일치합니다.");
+					$("#passConfirm").css('visibility', 'visible');
+					$("#passConfirm").css('color','green');
+					passValidFlag = true;					
+				 }else{
+					$("#passConfirm").html("비밀번호가 일치하지 않습니다.");
+					$("#passConfirm").css('visibility', 'visible');
+					$("#passConfirm").css('color','red');
+					passValidFlag = false;
+				}
+				});
+			$("#confirm").on("focusout",function(){
+				$("#passConfirm").css('visibility', 'hidden');
+			});
+			$("#formBtn").on("click",function(){
+				if(idValidFlag && passValidFlag){
+					$("#registerForm").submit();
+				}else if(idValidFlag){
+					alert('비밀번호가 일치하는지 확인해주세요.');
+				}else if(passValidFlag){
+					alert('아이디가 사용 가능한 아이디인지 확인해주세요');
+				}else{
+					alert('회원가입 양식을 채워주세요');
+				}
+			});
+					 			  
+	});
+
+		function autotab(start,end){
+			if(start.value.length == start.getAttribute("maxlength")){
+				console.log(start.getAttribute("maxlength"));
+				end.focus();
+			}
+		}
+
+		function ValidateEmail() 
+		{
+		 if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(document.registerForm.email.value))
+		  {
+			 //console.log("성공");
+			 return (true);
+		  }else{
+			 //console.log("실패");
+		     return (false);
+		  }
+
+		}
+
+   			 
   </script>
 </head>
 
 <body id="page-top">
-<%
-	gongiiDAO bbs = gongiiDAO.getInstance(); //싱글턴으로 객체 생성.
-	request.setCharacterEncoding("utf-8");
-	String key = request.getParameter("key");
-	String title = request.getParameter("title");
-	String content = request.getParameter("content");
-	int rootid = (request.getParameter("rootid") == null) ? 0 : Integer.parseInt(request.getParameter("rootid"));
-	int relevel = (request.getParameter("relevel") == null) ? 0 : Integer.parseInt(request.getParameter("relevel"));
-	int recnt = (request.getParameter("recnt")==null) ? 0 : Integer.parseInt(request.getParameter("recnt"));
-	System.out.println("입력되는 rootid: "+ rootid + ", relevel: "+ relevel+", recnt: "+recnt);
-	int errorcode =0;
-	gongiiVO article;
-	//새글을 씀 key=INSERT
-	//수정 key=글번호
-	
-	if(key.equals("INSERT")){
-		errorcode=bbs.insertArticle(title,content,rootid,relevel,recnt);
-		article = bbs.getArticle();
-		if(relevel==0){ //원글인 경우, rootid값은 id와 같아야 하기 때문에 테이블 삽입 후 별도의 update가 필요.
-			bbs.updateWonGul(article.getId());
-			article=bbs.getArticle(); //마지막으로 삽입된 레코드를 가져와서 화면에 출력한다.
-		}
-	}else{
-		int id = Integer.parseInt(key);
-		errorcode = bbs.updateArticle(id, title, content); //DB레코드 수정 쿼리 수행 메소드
-		article = bbs.getArticle(id);	//id와 일치하는 레코드를 가져와서 화면에 출력한다
-	}
-	pageContext.setAttribute("key",key);
-	pageContext.setAttribute("errorcode", errorcode);
-	pageContext.setAttribute("article",article);
-%>
   <!-- Navigation -->
   <!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">-->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top shrink" id="mainNav">
@@ -349,7 +422,7 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="c_01.jsp">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="c_02.jsp">스파</a>
@@ -363,7 +436,7 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
+		        <a class="nav-link"  href="d_01.jsp">예약상황</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
@@ -390,67 +463,94 @@
   <section class="page-section" id="services">
      
     <div class="centered">
-    	<h1 style="margin-top:50px">공지사항</h1>
+    	<h1 style="margin-top:50px">멤버 회원가입</h1>
     </div>
     <div class="container">
       <div class="row">
       	<div class="col-lg-12 text-center">
-      	<c:choose>
-      		<c:when test="${key ne 'INSERT'}">
-      			<p><c:out value="${article.getId()}"/>번 글이 다음과 같이 수정되었습니다.</p>
-      		</c:when>
-      		<c:otherwise>
-      			<p>다음 내용이 공지사항 게시판에 추가되었습니다.</p>
-      		</c:otherwise>
-      	</c:choose>
+      	<p>이곳은 신규 회원 등록 페이지 입니다.<p>
       	</div>
         <div class="col-lg-12 text-center gongii-Board">        
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
-		<c:choose>
-			<c:when test="${article ne null && !empty sessionScope.login_ok}">
-				<!-- DB로부터 게시글을 성공적으로 가져왔고 관리자 로그인 상태인 경우에만 실행 -->
-				<div>
-					<FORM method="POST" style="text-align:left">
-					<table align=center width=800 cellspacing=1 border=1>
-					<TR>
-					<th>번호</th>
-					<td><input type="number" name="key" value='<c:out value="${article.getId()}"/>' readonly/></td>		
-					</TR>
-					<TR>
-					<th>제목</th>
-					<td><input type="text" name="title" value='<c:out value="${article.getTitle()}"/>' maxlength="70" autocomplete=off readonly/></td>		
-					</TR>			
-					<TR>
-					<th>일자</th>
-					<td><c:out value="${article.getDate()}"/></td>		
-					</TR>
-					<TR>
-					<th>내용</th>
-					<td>
-						<textarea name="content" cols="80" rows="30" maxlength="1500" readonly><c:out value="${article.getContent()}"/>
-						</textarea>
-					<script>
-						CKEDITOR.plugins.addExternal( 'filebrowser', '/myplugins/abbr/', 'plugin.js' );
-	                  	CKEDITOR.replace( 'content' ,{
-							height:'100%',
-							width:'100%',
-						    resize_dir: 'none'
-	                    });
-	             	</script>						
-					</td>		
-					</TR>						
-					</table>
-					<span>
-						<a href="e_01.jsp" class="btn btn-primary btn-lg rippler rippler-inverse">목록으로</a>
-					</span>		
-					</FORM>
-				</div>
-			</c:when>
-			<c:otherwise>
-			<%--article이 null인 경우 이하 코드 실행--%>
-				<%response.sendError(500); //만약 에러가 발생하면 500에러를 발생시킴%>
-			</c:otherwise>
-		</c:choose>		
+                        <div class="card" style="display:inline-block; width:60%">
+                            <div class="card-header">회원가입</div>
+                            <div class="card-body">
+
+                                <form class="form-horizontal" name="registerForm" id="registerForm" method="post" action="member_registerPro.jsp">
+
+                                    <div class="form-group">
+                                        <label for="name" class="cols-sm-2 control-label">이름</label>
+                                        <div class="cols-sm-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                                                <input type="text" class="form-control" name="name" id="name" placeholder="이름을 입력해주세요" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="cols-sm-2 control-label">아이디(이메일)</label>
+                                        <div class="cols-sm-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+                                                <input type="email" class="form-control" name="email" id="email" placeholder="아이디(이메일)을 입력해주세요" />
+                                            </div>
+                                            <div>
+                                            <p style="color:red; visibility:hidden" id="idConfirm"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password" class="cols-sm-2 control-label">비밀번호</label>
+                                        <div class="cols-sm-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                                <input type="password" class="form-control" name="password" id="password" placeholder="비밀번호를 입력해주세요" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirm" class="cols-sm-2 control-label">비밀번호 재입력</label>
+                                        <div class="cols-sm-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                                <input type="password" class="form-control" name="confirm" id="confirm" placeholder="비밀번호를 재입력해주세요" required/>
+                                            </div>
+                                            <div>
+                                            <p style="color:red; visibility:hidden" id="passConfirm"></p>
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="username" class="cols-sm-2 control-label">주소</label>
+                                        <div class="cols-sm-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fal fa-map-marker-alt" aria-hidden="true"></i></span>
+                                                <input type="text" class="form-control" name="address" id="address" onInput="goPopup();" placeholder="주소를 입력해주세요" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="username" class="cols-sm-2 control-label">전화번호</label>
+                                        <div class="cols-sm-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fas fa-phone" aria-hidden="true"></i></span>                                            
+                                                <input type="text" class="form-control" name="tel1" onKeyup="autotab(this,document.registerForm.tel2)" id="tel1" maxlength=3 required/>
+                                                <h3> - </h3>
+                                                <input type="text" class="form-control" name="tel2" onKeyup="autotab(this,document.registerForm.tel3)" id="tel2" maxlength=4 required/>
+                                                <h3> - </h3>
+                                                <input type="text" class="form-control" name="tel3" id="tel3" maxlength=4 required/>
+                                            </div>
+                                        </div>
+                                    </div>                                                                         
+                                    <div class="form-group ">
+                                        <button type="button" id="formBtn" class="btn btn-primary btn-lg btn-block login-button">회원가입</button>
+                                    </div>
+                                    <div class="login-register">
+                                        <a href="index.jsp">취소하고 홈으로</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
         </div>
       </div>
     </div>

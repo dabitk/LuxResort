@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*,java.io.*,com.resort.gongii.*"%>
+<%@ page import="java.util.*,java.io.*,com.resort.gongii.*,com.resort.reservation.*"%>
 <%@ taglib prefix="c" uri= "http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
@@ -12,7 +12,7 @@
   <meta name="description" content="">
   <meta name="author" content="dabitk">
   <script src="https://kit.fontawesome.com/c0559a0b41.js" crossorigin="anonymous"></script>
-  <title>럭셔리조트에 오신것을 환영합니다!</title>
+  <title>관리자 예약현황 게시판입니다.</title>
 
   <!-- 정후 커스텀: T맵 API -->
   <script script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appkey=l7xxdf613ea839e844f09766f70c6562a462"></script>
@@ -32,8 +32,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <!-- Custom styles for this template -->
   <link href="css/agency.min.css" rel="stylesheet">
-  <!-- ckeditor 가져옴 -->
-  <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
   
   <style>
   <!-- 공지게시판용 style -->
@@ -140,7 +138,7 @@
 		font-family:'FontAwesome'!important;
 	}
 	.centered{
-	    background-image: url(img/notice.jpg);
+	    background-image: url(img/admlogin.jpg);
 	    background-size: cover;
 		text-align:center;
 	    color: white;
@@ -158,6 +156,7 @@
 
   </style>
   <script>
+  
 	  function getTime(){
 		    const date = new Date();
 			const current_year = date.getFullYear();
@@ -211,42 +210,45 @@
 			  	$('#navbarResponsive3').removeClass("show");
 			  	$('#navbarResponsive4').removeClass("show");
 			  	$('#navbarResponsive5').removeClass("show");			    
-			 });			  
+			 });	 			  
 	});	 
   </script>
 </head>
 
 <body id="page-top">
 <%
-	gongiiDAO bbs = gongiiDAO.getInstance(); //싱글턴으로 객체 생성.
 	request.setCharacterEncoding("utf-8");
-	String key = request.getParameter("key");
-	String title = request.getParameter("title");
-	String content = request.getParameter("content");
-	int rootid = (request.getParameter("rootid") == null) ? 0 : Integer.parseInt(request.getParameter("rootid"));
-	int relevel = (request.getParameter("relevel") == null) ? 0 : Integer.parseInt(request.getParameter("relevel"));
-	int recnt = (request.getParameter("recnt")==null) ? 0 : Integer.parseInt(request.getParameter("recnt"));
-	System.out.println("입력되는 rootid: "+ rootid + ", relevel: "+ relevel+", recnt: "+recnt);
-	int errorcode =0;
-	gongiiVO article;
-	//새글을 씀 key=INSERT
-	//수정 key=글번호
+	reservationDAO resvDAO = reservationDAO.getInstance(); //싱글턴으로 객체 생성.
+	reservationVO resv = null;
+	int room = Integer.parseInt(request.getParameter("room"));
+	String checkin = request.getParameter("checkin");
+
 	
-	if(key.equals("INSERT")){
-		errorcode=bbs.insertArticle(title,content,rootid,relevel,recnt);
-		article = bbs.getArticle();
-		if(relevel==0){ //원글인 경우, rootid값은 id와 같아야 하기 때문에 테이블 삽입 후 별도의 update가 필요.
-			bbs.updateWonGul(article.getId());
-			article=bbs.getArticle(); //마지막으로 삽입된 레코드를 가져와서 화면에 출력한다.
-		}
+	String loginOK=null;
+	String jumpURL_Fail = "admin_login_form.jsp";
+	
+	loginOK = (String)session.getAttribute("login_ok");
+	
+	if(loginOK == null){
+		response.sendRedirect(jumpURL_Fail);
+	}else if(!loginOK.equals("yes")){
+		response.sendRedirect(jumpURL_Fail);
 	}else{
-		int id = Integer.parseInt(key);
-		errorcode = bbs.updateArticle(id, title, content); //DB레코드 수정 쿼리 수행 메소드
-		article = bbs.getArticle(id);	//id와 일치하는 레코드를 가져와서 화면에 출력한다
+		resv = resvDAO.getSingleBookingInfo_Admin(room,checkin);
 	}
-	pageContext.setAttribute("key",key);
-	pageContext.setAttribute("errorcode", errorcode);
-	pageContext.setAttribute("article",article);
+	
+	String roomName = null; //패러미터로 받아온 room 값에 따라 '객실'란에 들어갈 문자열을 정함.
+	if(room == 1){
+		roomName = "럭셔리 클럽 스위트";
+	}else if(room == 2){
+		roomName = "로열 스위트";
+	}else if(room ==3){
+		roomName = "프리미어 디럭스";
+	}else{
+		roomName = "";
+	}
+	
+	pageContext.setAttribute("resv",resv); //페이지 컨텍스트에 resv 속성을 지정한다
 %>
   <!-- Navigation -->
   <!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">-->
@@ -349,7 +351,7 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="c_01.jsp">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="c_02.jsp">스파</a>
@@ -390,67 +392,64 @@
   <section class="page-section" id="services">
      
     <div class="centered">
-    	<h1 style="margin-top:50px">공지사항</h1>
+    	<h1 style="margin-top:50px">관리자 예약 현황 관리</h1>
     </div>
     <div class="container">
       <div class="row">
       	<div class="col-lg-12 text-center">
-      	<c:choose>
-      		<c:when test="${key ne 'INSERT'}">
-      			<p><c:out value="${article.getId()}"/>번 글이 다음과 같이 수정되었습니다.</p>
-      		</c:when>
-      		<c:otherwise>
-      			<p>다음 내용이 공지사항 게시판에 추가되었습니다.</p>
-      		</c:otherwise>
-      	</c:choose>
+      	<p>관리자 전용 예약 현황 관리 페이지 입니다.<p>
       	</div>
-        <div class="col-lg-12 text-center gongii-Board">        
+        <div class="col-lg-12 text-center ">        
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
-		<c:choose>
-			<c:when test="${article ne null && !empty sessionScope.login_ok}">
-				<!-- DB로부터 게시글을 성공적으로 가져왔고 관리자 로그인 상태인 경우에만 실행 -->
-				<div>
-					<FORM method="POST" style="text-align:left">
-					<table align=center width=800 cellspacing=1 border=1>
-					<TR>
-					<th>번호</th>
-					<td><input type="number" name="key" value='<c:out value="${article.getId()}"/>' readonly/></td>		
-					</TR>
-					<TR>
-					<th>제목</th>
-					<td><input type="text" name="title" value='<c:out value="${article.getTitle()}"/>' maxlength="70" autocomplete=off readonly/></td>		
-					</TR>			
-					<TR>
-					<th>일자</th>
-					<td><c:out value="${article.getDate()}"/></td>		
-					</TR>
-					<TR>
-					<th>내용</th>
-					<td>
-						<textarea name="content" cols="80" rows="30" maxlength="1500" readonly><c:out value="${article.getContent()}"/>
-						</textarea>
-					<script>
-						CKEDITOR.plugins.addExternal( 'filebrowser', '/myplugins/abbr/', 'plugin.js' );
-	                  	CKEDITOR.replace( 'content' ,{
-							height:'100%',
-							width:'100%',
-						    resize_dir: 'none'
-	                    });
-	             	</script>						
-					</td>		
-					</TR>						
-					</table>
-					<span>
-						<a href="e_01.jsp" class="btn btn-primary btn-lg rippler rippler-inverse">목록으로</a>
-					</span>		
-					</FORM>
-				</div>
-			</c:when>
-			<c:otherwise>
-			<%--article이 null인 경우 이하 코드 실행--%>
-				<%response.sendError(500); //만약 에러가 발생하면 500에러를 발생시킴%>
-			</c:otherwise>
-		</c:choose>		
+        	<c:choose>
+        		<c:when test="${resv ne null}">
+				<FORM method="POST" name="form" id="form">
+				<table align=center width=800 cellspacing=1 border=1>
+				<TR>
+				<th>성명</th>
+				<td><input type="text" name="name" maxlength="6" value="${resv.name}" autocomplete=off required/></td>		
+				</TR>
+				<TR>
+				<th>예약일자</th>
+				<td><input type="text" name="checkin" value="${resv.resv_date}" readonly/></td>		
+				</TR>	
+				<TR>
+				<th>예약 객실</th>
+				<td><input type="hidden" name="room" id="room" value="${resv.room}" readonly/><input type="text" value="<%=roomName%>" readonly/></td>		
+				</TR>
+				<TR>
+				<th>주소</th>
+				<td><input type="text" id ="addr" name="addr" maxlength="50" autocomplete=off value="${resv.addr}" readonly/></td>
+				</TR>
+				<TR>
+				<th>전화번호</th>
+				<td><input type="tel" id="telnum" name="phone" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" placeholder="OOO-OOOO-OOOO" value="${resv.telnum}" readonly>	
+				</TR>
+				<TR>
+				<th>입금자명</th>
+				<td><input type="text" name="in_name" maxlength="6" autocomplete=off value="${resv.in_name}" readonly/></td>
+				</TR>
+				<TR>
+				<th>남기실말</th>
+				<td><input type="text" name="comment" maxlength="50" autocomplete=off value="${resv.comment}" readonly/></td>
+				</TR>
+				<TR>
+				<th>예약신청일자</th>
+				<td><input type="text" name="write_date" value="${resv.write_date}"	readonly/></td>			
+				</TR>
+				<TR>
+				<th>진행상태</th>
+				<td><input type="number" name="processing" min="1" max="4" value="${resv.processing}" required/></td>
+				</TR>
+				</table>
+				<input type='submit' value='쓰기' onclick='this.form.action="admin_resvUpdatePro.jsp";'/>
+				<input type='submit' value='삭제' onclick='this.form.action="admin_resvDeletePro.jsp";'/>				
+				</FORM>
+				</c:when>
+				<c:otherwise>
+					<%response.sendError(500);%>
+				</c:otherwise>
+			</c:choose>
         </div>
       </div>
     </div>

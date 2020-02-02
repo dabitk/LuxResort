@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri= "http://java.sun.com/jsp/jstl/core"%>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -124,7 +125,24 @@
 	  background: -webkit-linear-gradient(90deg,#B37E01,#F6E779,#B37E01);
 	  -webkit-background-clip: text;
 	  -webkit-text-fill-color: transparent;
-	}	
+	}
+	
+	<!--테이블 스타일-->
+	
+	th,td{
+		padding:30px 30px; font-size:16px; vertical-align:middle;
+	}
+	td{
+		background-color: white;
+	}
+	table{
+		width:100%;
+		border-collapse:collapse;
+		border-spacing:0;
+		box-sizing:border-box;
+		border-top:2px solid #999;
+		border-bottom:2px solid #999;
+	}		
   </style>
   <script>
 	  function getTime(){
@@ -199,8 +217,20 @@
   		<div class="navbar-top--left"></div>
   		<div class="navbar-top--right">
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
-  			<a class="navbar-top-LOGIN" href="#">LOG IN</a>
-  			<a class="navbar-top-REGISTER" href="#">REGISTER</a>
+  			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
+  			<c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
+		  				LOG OUT
+		  			</a>  				
+  				</c:when>
+  				<c:otherwise>
+  					<a class="navbar-top-LOGIN" href="member_login.jsp">
+		  				LOG IN
+		  			</a>
+  				</c:otherwise>
+  			</c:choose>
+  			<a class="navbar-top-REGISTER" href="member_register.jsp">REGISTER</a>
 	        <li class="nav-item dropdown" style="display:inline-block; list-style-type: none; text-color: gray">
 	          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
@@ -267,13 +297,13 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="#">레스토랑</span></a>
+		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">바&라운지</a>
+		        <a class="nav-link"  href="b_02.jsp">바&라운지</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link "  href="#">베이커리</a>
+		        <a class="nav-link "  href="b_03.jsp">베이커리</a>
 		      </li>
 		    </ul>		   		
 		</div>
@@ -281,16 +311,14 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="#">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">온천</a>
+		        <a class="nav-link"  href="c_02.jsp">스파</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link" href="#">피트니스</a>
+		        <a class="nav-link" href="c_03.jsp">대연회장</a>
 		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="#">대연회장</a>
 		    </ul>		   		
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -336,7 +364,7 @@
 		  <!-- Wrapper for slides -->
 		  <div class="carousel-inner" >
 		    <div class="carousel-item active">
-		      <img src="./img/food/food1.jpg" style="width:100%">
+		      <img src="./img/food/food1.jpg">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -344,7 +372,7 @@
 		    </div>
 		
 		    <div class="carousel-item">
-		      <img src="./img/food/food2.jpg" style="width:100%">
+		      <img src="./img/food/food2.jpg">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -352,7 +380,7 @@
 		    </div>
 		
 		    <div class="carousel-item">
-		      <img src="./img/food/food3.jpg" style="width:100%">
+		      <img src="./img/food/food3.jpg">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -371,14 +399,7 @@
 		  </a>
 		</div>
       </div>
-		<div id="fh5co-about" data-section="about" class="animated">
-			<div class="fh5co-2col fh5co-bg to-animate-2 fadeIn animated" style="background-image: url(images/res_img_1.jpg)"></div>
-			<div class="fh5co-2col fh5co-text">
-				<h2 class="heading to-animate fadeInUp animated">About Us</h2>
-				<p class="to-animate fadeInUp animated"><span class="firstcharacter">F</span>ar far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life.</p>
-				<p class="text-center to-animate fadeInUp animated"><a href="#" class="btn btn-primary btn-outline">Get in touch</a></p>
-			</div>
-		</div>
+
   </div>    
   </div>
   </header>
@@ -388,15 +409,18 @@
     <div class="container">
        <div class="row">
         <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" id="room_name">[럭셔리 클럽 스위트]</h2>
+          <h2 class="section-heading text-uppercase" id="room_name">[ 럭셔리 레스토랑 ]</h2>
           <h3 class="section-subheading text-muted">
-최고의 귀빈만을 위한 럭셔리 클럽 스위트는 품격 있는 유러피안 클래식 디자인을 바탕으로,
-<br>
- 현대적인 세련미를 더한 독특한 디자인을 가지고 있습니다.
-<br>
-예술 작품, 객실 소품에서도 품격이 느껴지는 VIP를 위한 한국 최고의 스위트 룸입니다.
-<br>
-모든 면에서 세계 최고를 체현하는 '럭셔리 클럽 스위트'에서 럭셔리조트가 ‘상위 1%의 선택’인 진정한 이유를 느껴보시기 바랍니다.</h3>
+			우아한 실내장식과 부드러운 조명, 전문적이고 세심한 직원 서비스 또한
+			<br>
+			소중한 사람과의 특별한 만남을 더욱 빛나게 합니다.
+			<br>
+			럭셔리 레스토랑은 에메랄드빛 바다 전경과 함께 최상의 프렌치 정찬을 즐길 수 있는
+			<br>
+			프렌치 레스토랑입니다.
+			국내 및 세계 각국에서 공수한 건강하고 신선한 제철 식자재 및 미쉐린 3성 스타 쉐프의 끊임없는
+			<br>
+			연구를 기반으로 현대적이고도 독창적으로 구현한 정통 프렌치를 선보입니다.</h3>
         </div>
       </div>
       <div class="row text-center">
@@ -408,37 +432,34 @@
 
   <!-- Portfolio Grid -->
   <section class="bg-light page-section" id="portfolio">
-    <div class="container" style="display:inline-block;">
+    <div class="container">
        <div class="row">
         <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" style="width:24%">객실 정보</h2>
-		  <div>
-
-		  <div>
+        		<h3>시설 개요</h3>
+				<table class="rwd-table">
+						<colgroup>
+							<col style="width: 20%">
+							<col style="width: 30%">
+							<col style="width: 20%">
+							<col style="width: 30%">
+						</colgroup>
+						<tbody>
+							<tr>
+								<th scope="col">이용시간</th>
+								<td><div class="td-txt">점심 12:00~15:00<br>저녁 18:00~22:00</div></td>
+								<th scope="col">타입</th>
+								<td><div class="td-txt">트레디셔널 프렌치</div></td>
+							</tr>
+							<tr>
+								<th scope="col">좌석수</th>
+								<td><div class="td-txt">36석</div></td>
+								<th scope="col">예약 및 문의</th>
+								<td><div class="td-txt">Tel)xx-xxxx-xxxx</div></td>
+							</tr>
+						</tbody>
+				</table>
         </div>
       </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section class="page-section" id="about">
-    <div class="container" style="display:inline-block;">
-       <div class="row">
-        <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" style="width:24%">특별서비스</h2>
-		</div>
-      </div>  
-    </div>
-  </section>
-
-  <!-- Team -->
-  <section class="bg-light page-section" id="team">
-    <div class="container" style="display:inline-block;">
-       <div class="row">
-        <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" style="width:24%">어메니티</h2>
-        </div>
       </div>
     </div>
   </section>

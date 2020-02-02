@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri= "http://java.sun.com/jsp/jstl/core"%>    
 <!DOCTYPE html>
 <html>
 <head>
@@ -124,7 +125,24 @@
 	  background: -webkit-linear-gradient(90deg,#B37E01,#F6E779,#B37E01);
 	  -webkit-background-clip: text;
 	  -webkit-text-fill-color: transparent;
-	}	
+	}
+	
+	<!--테이블 스타일-->
+
+	th,td{
+		padding:30px 30px; font-size:16px; vertical-align:middle;
+	}
+	td{
+		background-color: white;
+	}
+	table{
+		width:100%;
+		border-collapse:collapse;
+		border-spacing:0;
+		box-sizing:border-box;
+		border-top:2px solid #999;
+		border-bottom:2px solid #999;
+	}
   </style>
   <script>
 	  function getTime(){
@@ -233,8 +251,20 @@
   		<div class="navbar-top--left"></div>
   		<div class="navbar-top--right">
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
-  			<a class="navbar-top-LOGIN" href="#">LOG IN</a>
-  			<a class="navbar-top-REGISTER" href="#">REGISTER</a>
+  			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
+  			<c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
+		  				LOG OUT
+		  			</a>  				
+  				</c:when>
+  				<c:otherwise>
+  					<a class="navbar-top-LOGIN" href="member_login.jsp">
+		  				LOG IN
+		  			</a>
+  				</c:otherwise>
+  			</c:choose>
+  			<a class="navbar-top-REGISTER" href="member_register.jsp">REGISTER</a>
 	        <li class="nav-item dropdown" style="display:inline-block; list-style-type: none; text-color: gray">
 	          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
@@ -301,13 +331,13 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="#">레스토랑</span></a>
+		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">바&라운지</a>
+		        <a class="nav-link"  href="b_02.jsp">바&라운지</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link "  href="#">베이커리</a>
+		        <a class="nav-link "  href="b_03.jsp">베이커리</a>
 		      </li>
 		    </ul>		   		
 		</div>
@@ -315,16 +345,14 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="#">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">온천</a>
+		        <a class="nav-link"  href="c_02.jsp">스파</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link" href="#">피트니스</a>
+		        <a class="nav-link" href="c_03.jsp">대연회장</a>
 		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="#">대연회장</a>
 		    </ul>		   		
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -469,7 +497,7 @@
     <div class="container">
        <div class="row">
         <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" id="room_name">[럭셔리 클럽 스위트]</h2>
+          <h2 class="section-heading text-uppercase" id="room_name">[ 럭셔리 클럽 스위트 ]</h2>
           <h3 class="section-subheading text-muted">
 최고의 귀빈만을 위한 럭셔리 클럽 스위트는 품격 있는 유러피안 클래식 디자인을 바탕으로,
 <br>
@@ -481,22 +509,52 @@
         </div>
       </div>
       <div class="row text-center">
-		
 
-      </div>
+
+	  </div>
     </div>
   </section>
 
   <!-- Portfolio Grid -->
   <section class="bg-light page-section" id="portfolio">
-    <div class="container" style="display:inline-block;">
+    <div class="container">
        <div class="row">
-        <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" style="width:24%">객실 정보</h2>
-		  <div>
-
-		  <div>
-        </div>
+        <div class="col-lg-12 text-center" id="page_Spec">
+        		<h3>객실 개요</h3>
+				<table class="rwd-table">
+						<colgroup>
+							<col style="width: 20%">
+							<col style="width: 30%">
+							<col style="width: 20%">
+							<col style="width: 30%">
+						</colgroup>
+						<tbody>
+							<tr>
+								<th scope="col">체크인</th>
+								<td><div class="td-txt">15:00</div></td>
+								<th scope="col">체크아웃</th>
+								<td><div class="td-txt">11:00</div></td>
+							</tr>
+							<tr>
+								<th scope="col">기준 인원</th>
+								<td><div class="td-txt">4명</div></td>
+								<th scope="col">최대 인원</th>
+								<td><div class="td-txt">4명</div></td>
+							</tr>
+							<tr>
+								<th scope="col">객실 구성</th>
+								<td><div class="td-txt">침실 2, 거실 1, 다이닝룸, 욕실 2, 주방</div></td>
+								<th scope="col">객실 면적</th>
+								<td><div class="td-txt">277㎡</div></td>
+							</tr>
+							<tr>
+								<th scope="col">객실 수</th>
+								<td><div class="td-txt">1실</div></td>
+								<th scope="col"></th>
+								<td><div class="td-txt"></div></td>
+							</tr>
+						</tbody>
+				</table>
       </div>
       </div>
     </div>
@@ -504,23 +562,13 @@
 
   <!-- About -->
   <section class="page-section" id="about">
-    <div class="container" style="display:inline-block;">
+    <div class="container">
        <div class="row">
         <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" style="width:24%">특별서비스</h2>
+          <!-- <h2 class="section-heading text-uppercase" style="width:24%">어메니티</h2>-->
+          <h3>어메니티</h3>
 		</div>
       </div>  
-    </div>
-  </section>
-
-  <!-- Team -->
-  <section class="bg-light page-section" id="team">
-    <div class="container" style="display:inline-block;">
-       <div class="row">
-        <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" style="width:24%">어메니티</h2>
-        </div>
-      </div>
     </div>
   </section>
 

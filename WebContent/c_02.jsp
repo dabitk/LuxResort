@@ -1,11 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*,java.io.*,com.resort.gongii.*"%>
-<%@ taglib prefix="c" uri= "http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri= "http://java.sun.com/jsp/jstl/core"%>    
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -32,33 +29,13 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <!-- Custom styles for this template -->
   <link href="css/agency.min.css" rel="stylesheet">
-  <!-- ckeditor 가져옴 -->
-  <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
+  
+  <!-- datepicker 사용하기 위해 가져옴 -->
+  <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+  <script src="js/bootstrap-datepicker.js"></script>
+  <script src="js/bootstrap-datepicker.ko.min.js"></script> 
   
   <style>
-  <!-- 공지게시판용 style -->
-  		.key{
-			width:7%;
-			text-align:center;
-		}
-		.title{
-			width:68%;
-		}
-		.viewcnt{
-			width:12%;
-			text-align:center;
-		}
-		.registerDate{
-			width:13%;
-			text-align:center;
-		}
-		
-		#writeBtn{
-			float:right;
-		}
-
-   <!-- 이상 공지게시판용 style 종료--> 
-  
   	.hotel-name{
   	    font-weight: 500;
     	font-family: Montserrat, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -72,8 +49,9 @@
     	font-family: 'Droid Serif', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     	color: #a0a0a0;
   	}
-	.myVideo{
+	.room_Carousel{
 		position:relative;
+		width:100%;
 	}
 	.main-reservationbar{
 		z-index:2;
@@ -137,25 +115,34 @@
 		min-width: 150px;
 	}
 	body i {
-		font-family:'FontAwesome'!important;
+	font-family:'FontAwesome'!important;
 	}
-	.centered{
-	    background-image: url(img/notice.jpg);
-	    background-size: cover;
-		text-align:center;
-	    color: white;
-	    min-height: 200px;
-    	padding-top: 50px;
+	#services{
+		padding:0;
+	}
+	#room_name{
+	  font-size: 72px;
+	  background: -webkit-linear-gradient(90deg,#B37E01,#F6E779,#B37E01);
+	  -webkit-background-clip: text;
+	  -webkit-text-fill-color: transparent;
 	}
 	
-	.gongii-list{
-
-	    table-layout: fixed;
-	    width: 100%;
-	    margin: 0;
-	    border-bottom: 1px solid #ceccc6;
+	<!--테이블 스타일-->
+	
+	th,td{
+		padding:30px 30px; font-size:16px; vertical-align:middle;
 	}
-
+	td{
+		background-color: white;
+	}
+	table{
+		width:100%;
+		border-collapse:collapse;
+		border-spacing:0;
+		box-sizing:border-box;
+		border-top:2px solid #999;
+		border-bottom:2px solid #999;
+	}							
   </style>
   <script>
 	  function getTime(){
@@ -163,7 +150,6 @@
 			const current_year = date.getFullYear();
 			document.write(current_year);
 		}
-
 
 	  function toggle(id, id2) { //KOR,ENG,JPN 홈페이지 표시언어 변경 드롭바를 표시하는데 쓰이는 함수.
 	    var n = document.getElementById(id);
@@ -176,82 +162,58 @@
 	  		document.getElementById(id2).setAttribute('aria-expanded', 'true');
 		 }
 	  }
-	  $(document).ready(function(){
-		  $("#introduction").click( function () {
-			  	$('#navbarResponsive').attr('data-target','#navbarResponsive2');
-			  	$('#navbarResponsive3').removeClass("show");
-			  	$('#navbarResponsive4').removeClass("show");
-			  	$('#navbarResponsive5').removeClass("show");
-			  	$('#navbarResponsive6').removeClass("show");
-			  });
-		  $("#findhere").click( function () {	  
-			  	$('#navbarResponsive').attr('data-target','#navbarResponsive3');
-			  	$('#navbarResponsive2').removeClass("show");
-			  	$('#navbarResponsive4').removeClass("show");
-			  	$('#navbarResponsive5').removeClass("show");
-			  	$('#navbarResponsive6').removeClass("show");			  	
-			 });
-		  $("#toursite").click(function () {	  
-			    $('#navbarResponsive').attr('data-target','#navbarResponsive4');
-			  	$('#navbarResponsive2').removeClass("show");
-			  	$('#navbarResponsive3').removeClass("show");
-			  	$('#navbarResponsive5').removeClass("show");
-			  	$('#navbarResponsive6').removeClass("show");			    
-			 });
-		  $("#mkreservation").click(function () {	  
-			    $('#navbarResponsive').attr('data-target','#navbarResponsive5');
-			  	$('#navbarResponsive2').removeClass("show");
-			  	$('#navbarResponsive3').removeClass("show");
-			  	$('#navbarResponsive4').removeClass("show");
-			  	$('#navbarResponsive6').removeClass("show");		    
-			 });	
-		  $("#notice").click(function () {	  
-			    $('#navbarResponsive').attr('data-target','#navbarResponsive6');
-			  	$('#navbarResponsive2').removeClass("show");
-			  	$('#navbarResponsive3').removeClass("show");
-			  	$('#navbarResponsive4').removeClass("show");
-			  	$('#navbarResponsive5').removeClass("show");			    
-			 });			  
-	});	 
+		  $(document).ready(function(){
+			  $("#introduction").click( function () {
+				  	$('#navbarResponsive').attr('data-target','#navbarResponsive2');
+				  	$('#navbarResponsive3').removeClass("show");
+				  	$('#navbarResponsive4').removeClass("show");
+				  	$('#navbarResponsive5').removeClass("show");
+				  	$('#navbarResponsive6').removeClass("show");
+				  });
+			  $("#findhere").click( function () {	  
+				  	$('#navbarResponsive').attr('data-target','#navbarResponsive3');
+				  	$('#navbarResponsive2').removeClass("show");
+				  	$('#navbarResponsive4').removeClass("show");
+				  	$('#navbarResponsive5').removeClass("show");
+				  	$('#navbarResponsive6').removeClass("show");			  	
+				 });
+			  $("#toursite").click(function () {	  
+				    $('#navbarResponsive').attr('data-target','#navbarResponsive4');
+				  	$('#navbarResponsive2').removeClass("show");
+				  	$('#navbarResponsive3').removeClass("show");
+				  	$('#navbarResponsive5').removeClass("show");
+				  	$('#navbarResponsive6').removeClass("show");			    
+				 });
+			  $("#mkreservation").click(function () {	  
+				    $('#navbarResponsive').attr('data-target','#navbarResponsive5');
+				  	$('#navbarResponsive2').removeClass("show");
+				  	$('#navbarResponsive3').removeClass("show");
+				  	$('#navbarResponsive4').removeClass("show");
+				  	$('#navbarResponsive6').removeClass("show");		    
+				 });	
+			  $("#notice").click(function () {	  
+				    $('#navbarResponsive').attr('data-target','#navbarResponsive6');
+				  	$('#navbarResponsive2').removeClass("show");
+				  	$('#navbarResponsive3').removeClass("show");
+				  	$('#navbarResponsive4').removeClass("show");
+				  	$('#navbarResponsive5').removeClass("show");			    
+				 });
+			  $('.carousel').carousel({
+				  interval: 2000,
+				  pause:false
+				});					 			  
+		});
+	 	  
+
   </script>
 </head>
 
 <body id="page-top">
-<%
-	gongiiDAO bbs = gongiiDAO.getInstance(); //싱글턴으로 객체 생성.
-	request.setCharacterEncoding("utf-8");
-	String key = request.getParameter("key");
-	String title = request.getParameter("title");
-	String content = request.getParameter("content");
-	int rootid = (request.getParameter("rootid") == null) ? 0 : Integer.parseInt(request.getParameter("rootid"));
-	int relevel = (request.getParameter("relevel") == null) ? 0 : Integer.parseInt(request.getParameter("relevel"));
-	int recnt = (request.getParameter("recnt")==null) ? 0 : Integer.parseInt(request.getParameter("recnt"));
-	System.out.println("입력되는 rootid: "+ rootid + ", relevel: "+ relevel+", recnt: "+recnt);
-	int errorcode =0;
-	gongiiVO article;
-	//새글을 씀 key=INSERT
-	//수정 key=글번호
-	
-	if(key.equals("INSERT")){
-		errorcode=bbs.insertArticle(title,content,rootid,relevel,recnt);
-		article = bbs.getArticle();
-		if(relevel==0){ //원글인 경우, rootid값은 id와 같아야 하기 때문에 테이블 삽입 후 별도의 update가 필요.
-			bbs.updateWonGul(article.getId());
-			article=bbs.getArticle(); //마지막으로 삽입된 레코드를 가져와서 화면에 출력한다.
-		}
-	}else{
-		int id = Integer.parseInt(key);
-		errorcode = bbs.updateArticle(id, title, content); //DB레코드 수정 쿼리 수행 메소드
-		article = bbs.getArticle(id);	//id와 일치하는 레코드를 가져와서 화면에 출력한다
-	}
-	pageContext.setAttribute("key",key);
-	pageContext.setAttribute("errorcode", errorcode);
-	pageContext.setAttribute("article",article);
-%>
+
   <!-- Navigation -->
   <!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">-->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top shrink" id="mainNav">
-  	<div class="navbar-top" style="width:100%">
+  	<div class="navbar-top">
   		<div class="navbar-top--left"></div>
   		<div class="navbar-top--right">
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
@@ -298,19 +260,19 @@
       </button>
        <div class="collapse navbar-collapse" id="navbarResponsive" data-toggle="collapse" data-target="#navbarResponsive2" aria-controls="navbarResponsive2" aria-expanded="false" aria-label="Toggle navigation2">
         <ul class="navbar-nav text-uppercase ml-auto">
-          <li class="nav-item" style="min-width: 150px" id="introduction">
+          <li class="nav-item" style="min-width: 150px" id ="introduction" >
             <a class="nav-link js-scroll-trigger" href="#">리조트소개</a>           
           </li>
-          <li class="nav-item" style="min-width: 150px" id ="findhere">
+          <li class="nav-item" style="min-width: 150px" id = "findhere" >
             <a class="nav-link js-scroll-trigger" href="#">다이닝</a>
           </li>
-          <li class="nav-item" style="min-width: 150px" id="toursite">
+          <li class="nav-item" style="min-width: 150px" id="toursite" >
             <a class="nav-link js-scroll-trigger" href="#">부대시설</a>
           </li>
           <li class="nav-item" style="min-width: 150px" id ="mkreservation">
             <a class="nav-link js-scroll-trigger" href="#">예약하기</a>
           </li>
-          <li class="nav-item" style="min-width: 150px" id="notice">
+          <li class="nav-item" style="min-width: 150px" id="notice" >
             <a class="nav-link js-scroll-trigger" href="#">팬션소식</a>
           </li>
         </ul>
@@ -349,7 +311,7 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="c_01.jsp">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="c_02.jsp">스파</a>
@@ -383,86 +345,116 @@
 		      </li>
 		    </ul>		   		
 		</div>						      	
-    </div> 
+    </div>  
   </nav>
+
+  <!-- Header -->
+  <header class="masthead">
+  <div style="width:100%; height:100%">
+  <div class="room_Carousel">
+      <div class="row text-center">
+		<div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel" style="width:100%">
+		  <!-- Indicators -->
+		  <ol class="carousel-indicators">
+		    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+		    <li data-target="#myCarousel" data-slide-to="1"></li>
+		    <li data-target="#myCarousel" data-slide-to="2"></li>
+		  </ol>
+		
+		  <!-- Wrapper for slides -->
+		  <div class="carousel-inner" >
+		    <div class="carousel-item active">
+		      <img src="./img/facilities/spa1.jpg">
+		      <div class="carousel-caption">
+		        <h3></h3>
+		        <p></p>
+		      </div>
+		    </div>
+		
+		    <div class="carousel-item">
+		      <img src="./img/facilities/spa2.jpg">
+		      <div class="carousel-caption">
+		        <h3></h3>
+		        <p></p>
+		      </div>
+		    </div>
+		
+		    <div class="carousel-item">
+		      <img src="./img/facilities/spa3.jpg">
+		      <div class="carousel-caption">
+		        <h3></h3>
+		        <p></p>
+		      </div>
+		    </div>
+		  </div>
+		
+		  <!-- Left and right controls -->
+		  <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+		    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		    <span class="sr-only">Previous</span>
+		  </a>
+		  <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+		    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+		    <span class="sr-only">Next</span>
+		  </a>
+		</div>
+      </div>
+
+  </div>    
+  </div>
+  </header>
 
   <!-- Services -->
   <section class="page-section" id="services">
-     
-    <div class="centered">
-    	<h1 style="margin-top:50px">공지사항</h1>
-    </div>
     <div class="container">
-      <div class="row">
-      	<div class="col-lg-12 text-center">
-      	<c:choose>
-      		<c:when test="${key ne 'INSERT'}">
-      			<p><c:out value="${article.getId()}"/>번 글이 다음과 같이 수정되었습니다.</p>
-      		</c:when>
-      		<c:otherwise>
-      			<p>다음 내용이 공지사항 게시판에 추가되었습니다.</p>
-      		</c:otherwise>
-      	</c:choose>
-      	</div>
-        <div class="col-lg-12 text-center gongii-Board">        
-		<!-- 이곳에 공지사항 게시판을 추가한다. -->
-		<c:choose>
-			<c:when test="${article ne null && !empty sessionScope.login_ok}">
-				<!-- DB로부터 게시글을 성공적으로 가져왔고 관리자 로그인 상태인 경우에만 실행 -->
-				<div>
-					<FORM method="POST" style="text-align:left">
-					<table align=center width=800 cellspacing=1 border=1>
-					<TR>
-					<th>번호</th>
-					<td><input type="number" name="key" value='<c:out value="${article.getId()}"/>' readonly/></td>		
-					</TR>
-					<TR>
-					<th>제목</th>
-					<td><input type="text" name="title" value='<c:out value="${article.getTitle()}"/>' maxlength="70" autocomplete=off readonly/></td>		
-					</TR>			
-					<TR>
-					<th>일자</th>
-					<td><c:out value="${article.getDate()}"/></td>		
-					</TR>
-					<TR>
-					<th>내용</th>
-					<td>
-						<textarea name="content" cols="80" rows="30" maxlength="1500" readonly><c:out value="${article.getContent()}"/>
-						</textarea>
-					<script>
-						CKEDITOR.plugins.addExternal( 'filebrowser', '/myplugins/abbr/', 'plugin.js' );
-	                  	CKEDITOR.replace( 'content' ,{
-							height:'100%',
-							width:'100%',
-						    resize_dir: 'none'
-	                    });
-	             	</script>						
-					</td>		
-					</TR>						
-					</table>
-					<span>
-						<a href="e_01.jsp" class="btn btn-primary btn-lg rippler rippler-inverse">목록으로</a>
-					</span>		
-					</FORM>
-				</div>
-			</c:when>
-			<c:otherwise>
-			<%--article이 null인 경우 이하 코드 실행--%>
-				<%response.sendError(500); //만약 에러가 발생하면 500에러를 발생시킴%>
-			</c:otherwise>
-		</c:choose>		
+       <div class="row">
+        <div class="col-lg-12 text-center">
+          <h2 class="section-heading text-uppercase" id="room_name">[ 럭셔리 스파 ]</h2>
+          <h3 class="section-subheading text-muted">
+
         </div>
+      </div>
+      <div class="row text-center">
+		
+
       </div>
     </div>
   </section>
 
+  <!-- Portfolio Grid -->
+  <section class="bg-light page-section" id="portfolio">
+    <div class="container">
+       <div class="row">
+        <div class="col-lg-12 text-center">
+        		<h3>서비스 개요</h3>
+				<table class="rwd-table">
+						<colgroup>
+							<col style="width: 20%">
+							<col style="width: 30%">
+							<col style="width: 20%">
+							<col style="width: 30%">
+						</colgroup>
+						<tbody>
+							<tr>
+								<th scope="col">운영시간</th>
+								<td><div class="td-txt"><br>금~일요일 09:00~17:00</div></td>
+								<th scope="col">예약 및 문의</th>
+								<td><div class="td-txt">Tel)xx-xxxx-xxxx</div></td>
+							</tr>
+						</tbody>
+				</table>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Contact -->
   <section class="page-section" id="contact">
     <div class="container">
-      <div class="row" style="width:100%">
+      <div class="row">
         <div class="col-lg-12 text-center">
-          <img src="./img/logos/logo2.png" style="max-width: 20%"/>
+          <img src="./img/logos/logo2.png" style="max-width: 20%">
           <h2 class="section-heading text-uppercase">럭셔리조트</h2>
           <h3 class="section-subheading text-muted">Your Story. Make History.</h3>
         </div>
@@ -477,7 +469,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="row align-items-center" >
+      <div class="row align-items-center">
         <div class="col-md-4">
           <span class="copyright">Copyright &copy; LuxClub <script>getTime()</script></span>
         </div>

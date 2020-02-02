@@ -156,6 +156,20 @@
 
   </style>
   <script>
+	  function goPopup(){ //주소 검색 팝업창을 띄우는 메소드.
+			// 호출된 페이지(jusopopup.jsp)에서 실제 주소검색URL(http://www.juso.go.kr/addrlink/addrLinkUrl.do)를 호출하게 됩니다.
+		    var pop = window.open("<%=request.getContextPath()%>/popup/jusoPopup.jsp","pop","width=570,height=420, scrollbars=yes, resizable=yes"); 
+		    
+			// 모바일 웹인 경우, 호출된 페이지(jusopopup.jsp)에서 실제 주소검색URL(http://www.juso.go.kr/addrlink/addrMobileLinkUrl.do)를 호출하게 됩니다.
+		    //var pop = window.open("/popup/jusoPopup.jsp","pop","scrollbars=yes, resizable=yes"); 
+		}
+		/** API 서비스 제공항목 확대 (2017.02) **/
+		function jusoCallBack(roadFullAddr,roadAddrPart1,addrDetail,roadAddrPart2,engAddr, jibunAddr, zipNo, admCd, rnMgtSn, bdMgtSn
+								, detBdNmList, bdNm, bdKdcd, siNm, sggNm, emdNm, liNm, rn, udrtYn, buldMnnm, buldSlno, mtYn, lnbrMnnm, lnbrSlno, emdNo){
+			// 팝업페이지에서 주소입력한 정보를 받아서, 현 페이지에 정보를 등록합니다.
+			document.form.addr.value = roadFullAddr;
+		}
+	  
 	  function getTime(){
 		    const date = new Date();
 			const current_year = date.getFullYear();
@@ -174,7 +188,10 @@
 	  		document.getElementById(id2).setAttribute('aria-expanded', 'true');
 		 }
 	  }
+
+	  	  
 	  $(document).ready(function(){
+	  	  
 		  $("#introduction").click( function () {
 			  	$('#navbarResponsive').attr('data-target','#navbarResponsive2');
 			  	$('#navbarResponsive3').removeClass("show");
@@ -209,21 +226,62 @@
 			  	$('#navbarResponsive3').removeClass("show");
 			  	$('#navbarResponsive4').removeClass("show");
 			  	$('#navbarResponsive5').removeClass("show");			    
-			 });			  
+			 });
+
+		//AJAX 요청으로 '숙박일수'란의 값이 변화할 때마다 중복예약이 없는지 확인한다.
+		//JSON 응답의 값이 0이면 예약 가능, 0 이외라면 중복이 존재하므로 alert창을 띄우고 '숙박일수'란을 비운다.
+		 $("#numOfNights").on("input",function(){
+				$.ajax({
+						url:"d_roomCheckAjax.jsp", //클라이언트가 요청을 보낼 서버의 URL 주소
+						data:{
+							room: $('input[name="room"]').val(),
+							checkin: $('input[name="checkin"]').val(),
+							numOfNights: $(this).val()},
+						type:"POST", //HTTP 요청 방식
+						dataType:"json" //서버에서 보내줄 데이터의 타입
+					})
+					//HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
+					.done(function(json){
+						console.log(json);
+						if(json.dupExists != 0){
+							$("#numOfNights").val(1); //숙박일수를 1로 초기화한다.
+							alert("중복된 예약이 있습니다. 다른 날짜 또는 숙박일수를 선택해 주십시오.");
+						}
+					});
+			 });		 			  
 	});	 
   </script>
 </head>
 
 <body id="page-top">
 <%
-	
+	request.setCharacterEncoding("utf-8");
+	reservationDAO bbs = reservationDAO.getInstance();	
 	int room = Integer.parseInt(request.getParameter("room"));
 	String checkin = request.getParameter("checkin");
+	checkin = checkin.contains("(") ? checkin.substring(0,checkin.indexOf("(")):checkin;
+	String checkout = request.getParameter("checkout") == null ? "":request.getParameter("checkout");
+	
+	int numOfNights = bbs.getDateDiff(checkin,checkout);//체크아웃 - 체크인 날짜. 즉, 숙박일수
+	
+	int dupExists = bbs.checkDuplicate(room, checkin, numOfNights);
+	
+	String roomName = null; //패러미터로 받아온 room 값에 따라 '객실'란에 들어갈 문자열을 정함.
+	if(room == 1){
+		roomName = "럭셔리 클럽 스위트";
+	}else if(room == 2){
+		roomName = "로열 스위트";
+	}else if(room ==3){
+		roomName = "프리미어 디럭스";
+	}else{
+		roomName = "";
+	}
 	
 	Calendar cal = Calendar.getInstance();
 	SimpleDateFormat dformat = new SimpleDateFormat("yyyy-MM-dd");
 	String today = dformat.format(cal.getTime());	
 %>
+
   <!-- Navigation -->
   <!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">-->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top shrink" id="mainNav">
@@ -231,8 +289,20 @@
   		<div class="navbar-top--left"></div>
   		<div class="navbar-top--right">
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
-  			<a class="navbar-top-LOGIN" href="#">LOG IN</a>
-  			<a class="navbar-top-REGISTER" href="#">REGISTER</a>
+  			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
+  			<c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
+		  				LOG OUT
+		  			</a>  				
+  				</c:when>
+  				<c:otherwise>
+  					<a class="navbar-top-LOGIN" href="member_login.jsp">
+		  				LOG IN
+		  			</a>
+  				</c:otherwise>
+  			</c:choose>
+  			<a class="navbar-top-REGISTER" href="member_register.jsp">REGISTER</a>
 	        <li class="nav-item dropdown" style="display:inline-block; list-style-type: none; text-color: gray">
 	          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
@@ -299,13 +369,13 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="#">레스토랑</span></a>
+		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">바&라운지</a>
+		        <a class="nav-link"  href="b_02.jsp">바&라운지</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link "  href="#">베이커리</a>
+		        <a class="nav-link "  href="b_03.jsp">베이커리</a>
 		      </li>
 		    </ul>		   		
 		</div>
@@ -313,16 +383,14 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="#">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">온천</a>
+		        <a class="nav-link"  href="c_02.jsp">스파</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link" href="#">피트니스</a>
+		        <a class="nav-link" href="c_03.jsp">대연회장</a>
 		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="#">대연회장</a>
 		    </ul>		   		
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -366,7 +434,7 @@
         <div class="col-lg-12 text-center gongii-Board">        
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
 			<div>
-				<FORM method="POST">
+				<FORM method="POST" name="form" id="form">
 				<table align=center width=800 cellspacing=1 border=1>
 				<TR>
 				<th>성명</th>
@@ -375,18 +443,22 @@
 				<TR>
 				<th>예약일자</th>
 				<td><input type="text" name="checkin" value="<%=checkin %>" readonly/></td>		
+				</TR>
+				<TR>
+				<th>숙박일수</th>
+				<td><input type="number" name="numOfNights" id="numOfNights" min="1" value="<%=numOfNights%>" required/></td>
 				</TR>			
 				<TR>
 				<th>예약 객실</th>
-				<td><input type="number" name="room" value="<%=room %>" readonly/></td>		
+				<td><input type="hidden" name="room" id="room" value="<%=room %>" readonly/><input type="text" value="<%=roomName%>" readonly/></td>		
 				</TR>
 				<TR>
 				<th>주소</th>
-				<td><input type="text" name="addr" maxlength="50" autocomplete=off required/></td>
+				<td><input type="text" id ="addr" name="addr" maxlength="50" autocomplete=off onInput="goPopup();" value="" required/></td>
 				</TR>
 				<TR>
 				<th>전화번호</th>
-				<td><input type="text" name="telnum" maxlength="15" autocomplete=off required/></td>		
+				<td><input type="tel" id="telnum" name="phone" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" placeholder="OOO-OOOO-OOOO" required>	
 				</TR>
 				<TR>
 				<th>입금자명</th>
@@ -396,9 +468,13 @@
 				<th>남기실말</th>
 				<td><input type="text" name="comment" maxlength="50" autocomplete=off required/></td>
 				</TR>
-				<TR>
-				
-				</TR>						
+				<script>
+				if(<%=dupExists%> != 0){ //페이지 로딩시에 중복된 예약날짜가 있는지 체크하는 자바스크립트
+					console.log(<%=dupExists%>);
+					document.getElementById('numOfNights').value=1; //숙박일수를 1로 초기화한다.
+					alert("중복된 예약이 있습니다. 다른 날짜 또는 숙박일수를 선택해 주십시오.");
+				}
+				</script>
 				</table>
 				<span>					
 					<a class="btn btn-primary btn-lg rippler rippler-inverse" href="d_01.jsp">취소</a>		

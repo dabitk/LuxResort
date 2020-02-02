@@ -220,9 +220,16 @@
 	List<calendarVO> resv_list = new ArrayList<calendarVO>();
 	request.setCharacterEncoding("utf-8");
 	
+//	String[] holidayList = new String[]{
+//				"토","일","01-01","01-24","01-25","01-26",
+//				"03-01","04-30","05-05","06-06","08-15",
+//				"09-30","10-01","10-02","10-03","10-09",
+//				"12-25"
+//	};
 	
 	resv_list=resv.getBookingInfo();	//첫번째 행부터 15개를 DB로부터 가져온다
-
+	
+	//pageContext.setAttribute("holidayList",holidayList);
 	pageContext.setAttribute("resv_list",resv_list); //페이지 컨텍스트에 list 속성을 지정한다
 %>
   <!-- Navigation -->
@@ -232,8 +239,20 @@
   		<div class="navbar-top--left"></div>
   		<div class="navbar-top--right">
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
-  			<a class="navbar-top-LOGIN" href="#">LOG IN</a>
-  			<a class="navbar-top-REGISTER" href="#">REGISTER</a>
+  			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
+  			<c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
+		  				LOG OUT
+		  			</a>  				
+  				</c:when>
+  				<c:otherwise>
+  					<a class="navbar-top-LOGIN" href="member_login.jsp">
+		  				LOG IN
+		  			</a>
+  				</c:otherwise>
+  			</c:choose>
+  			<a class="navbar-top-REGISTER" href="member_register.jsp">REGISTER</a>
 	        <li class="nav-item dropdown" style="display:inline-block; list-style-type: none; text-color: gray">
 	          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
@@ -300,13 +319,13 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="#">레스토랑</span></a>
+		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">바&라운지</a>
+		        <a class="nav-link"  href="b_02.jsp">바&라운지</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link "  href="#">베이커리</a>
+		        <a class="nav-link "  href="b_03.jsp">베이커리</a>
 		      </li>
 		    </ul>		   		
 		</div>
@@ -314,16 +333,14 @@
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 		      <li class="nav-item active" style="padding-left: 100px">
-		        <a class="nav-link"  href="#">야외수영장</span></a>
+		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="#">온천</a>
+		        <a class="nav-link"  href="c_02.jsp">스파</a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link" href="#">피트니스</a>
+		        <a class="nav-link" href="c_03.jsp">대연회장</a>
 		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="#">대연회장</a>
 		    </ul>		   		
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -373,12 +390,34 @@
 							<c:forEach var="a" items="${resv_list}">
 							<TR>
 								<!-- room1, room2, room3은 예약가능일 때만 클릭이 가능 -->
-								<TD class="calendr"><c:out value="${a.calendr}"/></TD>				
+								<TD class="calendr">
+								<c:choose>
+									<c:when test="${fn:contains(a.calendr,'토')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'일')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'01-01')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'01-24')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'01-25')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'01-26')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'03-01')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'04-30')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'05-05')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'06-06')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'08-15')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'09-30')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'10-01')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'10-02')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'10-03')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'10-09')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'12-25')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>		
+									<c:otherwise>
+										<p><c:out value="${a.calendr}"/></p>
+									</c:otherwise>
+								</c:choose>
+								</TD>
 								<c:choose>
 									<c:when test="${a.room1 ne '예약가능'}">
 										<TD class="room1"><c:out value="${a.room1}"/></TD>
-									</c:when>
-									
+									</c:when>									
 									<c:otherwise>
 										<TD class="room1"><a href="d_02.jsp?room=1&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room1}"/></a></TD>
 									</c:otherwise>								
