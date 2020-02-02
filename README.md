@@ -6,15 +6,15 @@ Home page:
 
 Session-authentication(member):
 Member Register
-![alt text](https://github.com/dabitk/LuxResort/blob/master/session_memberRegister "Session Auth1")
+![alt text](https://github.com/dabitk/LuxResort/blob/master/session_memberRegister.gif "Session Auth1")
 Member Login
-![alt text](https://github.com/dabitk/LuxResort/blob/master/session_memberLogin "Session Auth2")
+![alt text](https://github.com/dabitk/LuxResort/blob/master/session_memberLogin.gif "Session Auth2")
 
 Session-authentication(admin):
 ![alt text](https://github.com/dabitk/LuxResort/blob/master/session_login.gif "Session Auth3")
 
 Reservation system(new):
-![alt text](https://github.com/dabitk/LuxResort/blob/master/session_login.gif "Reservation System1")
+![alt text](https://github.com/dabitk/LuxResort/blob/master/Ajax_reservation.gif "Reservation System1")
 
 Reservation system(old):
 ![alt text](https://github.com/dabitk/LuxResort/blob/master/reservation_system.gif "Reservation System2")
