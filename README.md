@@ -6,8 +6,10 @@ Home page:
 
 Session-authentication(member):
 Member Register
+
 ![alt text](https://github.com/dabitk/LuxResort/blob/master/session_memberRegister.gif "Session Auth1")
 Member Login
+
 ![alt text](https://github.com/dabitk/LuxResort/blob/master/session_memberLogin.gif "Session Auth2")
 
 Session-authentication(admin):
