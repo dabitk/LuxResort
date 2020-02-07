@@ -5,7 +5,7 @@ Home page (Desktop):
 ![alt text](https://github.com/dabitk/LuxResort/blob/master/main_page.gif "Main Page")
 
 Home page (Mobile):
-![alt text](https://github.com/dabitk/LuxResort/blob/master/mobilePg.gif "Mobile Page")
+![alt text](https://github.com/dabitk/LuxResort/blob/master/mobilePg.JPG "Mobile Page")
 
 Session-authentication(member):
 
