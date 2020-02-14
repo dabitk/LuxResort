@@ -9,7 +9,7 @@
 <head>
 
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
   <meta name="description" content="">
   <meta name="author" content="dabitk">
   <script src="https://kit.fontawesome.com/c0559a0b41.js" crossorigin="anonymous"></script>
@@ -159,10 +159,22 @@
 	  }
 		  
 	  $(window).on('load',function(){
+		// 여기서부터 라인 171까지 모바일 디바이스를 탐지하면 모바이 전용 페이지로 리다이렉트 시키는 코드.
+		var isMobile = false; //initiate as false
+		// device detection
+		if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) 
+		    || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) { 
+		    isMobile = true;
+		}
+		if(isMobile === true){
+			window.location = "http://192.168.23.14:8080/LuxResort/mobile/m_index.jsp"
+		}
+
 	      $('#myModal').modal('show');
 	  });
 	  
 	  $(document).ready(function(){
+		  //이하 네비게이션 바를 클릭했을 때 서브메뉴가 나타나게 하는 부분
 		  $("#introduction").click( function () {
 			  	$('#navbarResponsive').attr('data-target','#navbarResponsive2');
 			  	$('#navbarResponsive3').removeClass("show");
@@ -304,10 +316,12 @@
       		<h3 class="hotel-slogan" style="margin:0">Your Story. Make History.</h3>
 		</span>      
       </a>
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        Menu
-        <i class="fas fa-bars"></i>
-      </button>
+		<span>
+	      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+	        Menu
+	        <i class="fas fa-bars"></i>
+	      </button>
+		</span>
 	<div class="collapse navbar-collapse" id="navbarResponsive" data-toggle="collapse" data-target="" aria-controls="navbarResponsive2" aria-expanded="false" aria-label="Toggle navigation2">
         <ul class="navbar-nav text-uppercase ml-auto">
           <li class="nav-item" style="min-width: 150px" id ="introduction" >
@@ -331,7 +345,7 @@
      <div class="container">
 	    <div id="navbarResponsive2" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
 		      <li class="nav-item active" style="padding-left:100px">
 		        <a class="nav-link"  href="a_01.jsp">럭셔리 클럽 스위트</span></a>
 		      </li>
@@ -345,7 +359,7 @@
 		</div>
 	    <div id="navbarResponsive3" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
 		      <li class="nav-item active" style="padding-left:100px">
 		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
@@ -359,7 +373,7 @@
 		</div>
 	    <div id="navbarResponsive4" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
 		      <li class="nav-item active" style="padding-left: 100px">
 		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
@@ -372,15 +386,22 @@
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
 		      </li>
-		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
-		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+		      <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+			      <li class="nav-item" style="padding-left:100px">
+			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			      </li>				
+  				</c:when>
+  				<c:otherwise>
+			      <li calss="nav-item" style="padding-left:100px">
+			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      </li>
+  				</c:otherwise>
+  			</c:choose>
 		    </ul>		   		
 		</div>
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -497,7 +518,7 @@
 		  <!-- Wrapper for slides -->
 		  <div class="carousel-inner">
 		    <div class="carousel-item active">
-		      <img src="/LuxResort/img/room/r4.jpg">
+		      <img src="/LuxResort/img/room/r4.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3>럭셔리 클럽 스위트</h3>
 		        <p>$1,500~</p>
@@ -505,7 +526,7 @@
 		    </div>
 		
 		    <div class="carousel-item">
-		      <img src="/LuxResort/img/room/r8.jpg">
+		      <img src="/LuxResort/img/room/r8.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3>로열 스위트</h3>
 		        <p>$800~</p>
@@ -513,7 +534,7 @@
 		    </div>
 		
 		    <div class="carousel-item">
-		      <img src="/LuxResort/img/room/r7.jpg">
+		      <img src="/LuxResort/img/room/r7.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3>프리미어 디럭스</h3>
 		        <p>$300~</p>
@@ -554,7 +575,7 @@
       	 	<h2 style="width:30%">"2019년 WORLD TOURSITE TOP100 선정"</h2>
       	 	<p id="toursite_desc_p">대한민국 최남단에 위치한 럭셔리조트는 제주도의 아름다움과 열대지방의 이국적인 감각을 현대적인 감각으로 풀어낸 5성 호텔로 파노라믹한 스카이라인과 환상적인 야경을 조망할 수 있으며 일몰과 일출을 한 자리에서 감상할 수 있는 국내 최고의 고품격 5성 럭셔리 호텔입니다.</p>
       	 </span>
-         <span id="toursite_div"><img src="/LuxResort/img/tour/grotto.jpg"/></span>
+         <span id="toursite_div"><img src="/LuxResort/img/tour/grotto.jpg" style="width:100%"/></span>
       </div>
       </div>
     </div>
@@ -570,7 +591,7 @@
         </div>
       </div>
       <div class="row" style="display:inline-block">
-         <span id="toursite2_div"><img style="width:100%"  src="/LuxResort/img/tour/bbq.jpg"/></span>
+         <span id="toursite2_div"><img style="width:100%" src="/LuxResort/img/tour/bbq.jpg"/></span>
       	 <span id="toursite2_description" >
       	 	<h2 style="width:30%; float:right">"제주도 유일의 미슐랭 3성 레스토랑이 선보이는 미식의 오케스트라"</h2>
       	 	<p id="toursite2_desc_p" style="float:right;">대한민국 최남단에 위치한 럭셔리조트는 제주도의 아름다움과 열대지방의 이국적인 감각을 현대적인 감각으로 풀어낸 5성 호텔로 파노라믹한 스카이라인과 환상적인 야경을 조망할 수 있으며 일몰과 일출을 한 자리에서 감상할 수 있는 국내 최고의 고품격 5성 럭셔리 호텔입니다.</p>

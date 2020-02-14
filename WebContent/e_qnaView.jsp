@@ -343,11 +343,18 @@
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
 		      </li>
-		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
-		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+		      <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+			      <li class="nav-item" style="padding-left:100px">
+			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			      </li>				
+  				</c:when>
+  				<c:otherwise>
+			      <li calss="nav-item" style="padding-left:100px">
+			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      </li>
+  				</c:otherwise>
+  			</c:choose>
 		    </ul>		   		
 		</div>
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -382,7 +389,7 @@
 				<%--article이 null이 아닌 경우 (에러가 발생하지 않음)에는 이하 코드 실행--%>
 					<div>
 						<FORM method="POST" style="text-align:left">
-						<table align=center width=800 cellspacing=1 border=1>
+						<table align=center cellspacing=1 border=1 style="width:100%">
 						<TR>
 							<th>번호</th>
 							<td><input type="number" name="key" value='<c:out value="${article.getId()}"/>' readonly/></td>		

@@ -333,11 +333,18 @@
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="d_01.jsp">예약상황</span></a>
 		      </li>
-		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
-		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+		      <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+			      <li class="nav-item" style="padding-left:100px">
+			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			      </li>				
+  				</c:when>
+  				<c:otherwise>
+			      <li calss="nav-item" style="padding-left:100px">
+			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      </li>
+  				</c:otherwise>
+  			</c:choose>
 		    </ul>		   		
 		</div>
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -369,7 +376,7 @@
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
 			<c:choose>
 				<c:when test="${!list.isEmpty()}">
-					<table align=center width=800 cellspacing=1 border=1 style="text-align:left;border-left:none;border-right:none;">
+					<table align=center cellspacing=1 border=1 style="text-align:left;border-left:none;border-right:none;">
 						<TR><TH class="key">번호</TH><TH class="title">제목</TH><TH class="viewCnt">조회수</TH><TH class="registerDate">등록일</TH></TR>
 						<c:forEach var="article" items="${list}">
 						<c:set var="myVar" value='${article.title}' />

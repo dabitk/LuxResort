@@ -218,7 +218,8 @@
 <body id="page-top">
 <%
 	request.setCharacterEncoding("utf-8");
-	session.invalidate();
+	//session.invalidate();
+	session.setAttribute("login_ok", null);
 	//로그아웃 후 리조트 홈페이지로 리다이렉트 시킨다.
 %>
 
@@ -231,7 +232,7 @@
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
   			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
   			<c:choose>
-  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+  				<c:when test="${(sessionScope.login_ok eq 'yes_member')}">
 		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
 		  				LOG OUT
 		  			</a>  				
@@ -339,11 +340,18 @@
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
 		      </li>
-		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
-		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+		      <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+			      <li class="nav-item" style="padding-left:100px">
+			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			      </li>				
+  				</c:when>
+  				<c:otherwise>
+			      <li calss="nav-item" style="padding-left:100px">
+			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      </li>
+  				</c:otherwise>
+  			</c:choose>
 		    </ul>		   		
 		</div>
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">

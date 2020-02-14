@@ -36,6 +36,9 @@
   <!-- Custom styles for this template -->
   <link href="css/agency.min.css" rel="stylesheet">
   
+  <!-- axios 테스트 -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  
   <style>
   <!-- 공지게시판용 style -->
   		.key{
@@ -359,11 +362,18 @@
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="d_01.jsp">예약상황</span></a>
 		      </li>
-		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
-		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+		      <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+			      <li class="nav-item" style="padding-left:100px">
+			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			      </li>				
+  				</c:when>
+  				<c:otherwise>
+			      <li calss="nav-item" style="padding-left:100px">
+			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      </li>
+  				</c:otherwise>
+  			</c:choose>
 		    </ul>		   		
 		</div>
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -421,44 +431,115 @@
 			      // 로그인 창을 띄웁니다.
 			      Kakao.Auth.login({
 			        success: function(authObj) {
+				        //2. 로그인 성공시, API를 호출한다.
 				       Kakao.API.request({
 					       url:'/v1/user/me',
 						   success:function(res){
-							   login(res);
-							   alert(JSON.stringify(res)); //JSON형태의 결과값 alert로 띄우기
-							   //alert(JSON.stringify(authObj));
-							   console.log(res.id); //콘솔 로그에 id정보 출력
-							   console.log(res.kaccount_email); //콘솔 로그에 이메일 정보 출력
-							   console.log(res.properties['nickname']); //콘솔 로그에 닉네임 출력
-							   console.log(authObj.access_token); //콘솔 로그에 토큰값 출력
-								
-							   }
-					       }) 
-			          alert(JSON.stringify(authObj));
-			        },
-			        fail: function(err) {
-			          alert(JSON.stringify(err));
-			        }
-			      });			      
-			    };
+							   res.id += "@k"; //res의 id속성값에 Kakao 로그인이라는 것을 나타내는 문자열 추가
+								$.ajax({ //AJAX로 이미 등록된 아이디가 있는지 체크
+									url:"/member_dupCheckAjax.jsp",
+									data: {email:res.id},
+									method:"POST",
+								},
+								success: function(idChk){ //성공적으로 응답이 돌아오면
+									if(idChk==0){ //사용 가능한 아이디인 경우
+										console.log("회원가입중...");
+										$.ajax({
+											url:"/member_SNSRegisterAjax.jsp",
+											method:"POST",
+											data:JSON.stringify({
+												email: res.id,
+												password: "kakao123", //일단 임의로 지정해둠
+												address: "kakaoAddr", //일단 임의로 지정해둠
+												name: res.nickname,
+												tel: "010-7304-6388"
+												}),
+												success: function(JSONData){
+													alert("회원가입이 정상적으로 완료되었습니다. 다시 한 번 카카오계정으로 로그인을 눌러주세요.");
+													location.reload(); //현재 페이지를 새로고침 함.
+												}
+											})
+											//else if(idChk==1){ //DB에 중복 아이디가 존재하는 경우는 로그인 시킨다.
+											//	console.log("로그인중...");
+												//로그인 처리 AJAX
+											//	$.ajax({
+											//		url:"member_loginck.jsp",
+											//		data:JSON.stringify({
+											//			email:  res.id,
+											//			password: "kakao123"}),
+											//		type:"POST", //HTTP 요청 방식
+											//		dataType:"json" //서버에서 보내줄 데이터의 타입
+											//		}).done(function(json){
+											//			console.log(json);
+											//			if(json.login_ok === 1){
+											//				alert("로그인 되었습니다.");
+											//				window.location.replace("./index.jsp");
+											//			}else{
+											//				alert("로그인 실패. 관리자에게 문의주세요.");
+											//			}
+											//		}									
+											//}
+										},
+										fail: function(err){
+											alert(JSON.stringify(err));
+											}
+										},
+										fail: function(error){
+											alert(JSON.stringify(error));
+										}
+						       
+								   });
+						       };
+					        });
+					      }
 
-				function login(res){
-						$.ajax({
-								url:"aa.jsp", //클라이언트가 요청을 보낼 서버의 URL 주소
-								data: res,
+			    
+				       
+								   
+									//url:"/member_SNSRegisterAjax.jsp",
+									//method:"POST",
+									//data:JSON.stringify({
+									//	userId : res.id,
+									//	userName : res.properties.nickname,
+									//	password:
+									//	})
+									//})
+
+							   //login(res);
+							   //alert(JSON.stringify(res)); //JSON형태의 결과값 alert로 띄우기
+							   //alert(JSON.stringify(authObj));
+							   //console.log(res.id); //콘솔 로그에 id정보 출력
+							   //console.log(res.kaccount_email); //콘솔 로그에 이메일 정보 출력
+							   //console.log(res.properties['nickname']); //콘솔 로그에 닉네임 출력
+							   //console.log(authObj.access_token); //콘솔 로그에 토큰값 출력
+								
+							   //}
+					       //}) 
+			   //       alert(JSON.stringify(authObj));
+			   //     },
+			   //     fail: function(err) {
+			   //       alert(JSON.stringify(err));
+			   //     }
+			   //   });			      
+			   //};
+
+				//function login(res){
+				//		$.ajax({
+				//				url:"aa.jsp", //클라이언트가 요청을 보낼 서버의 URL 주소
+				//				data: res,
 									
-								type:"POST", //HTTP 요청 방식
-								dataType:"json" //서버에서 보내줄 데이터의 타입
-							})
-							//HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
-							.done(function(json){
-								console.log(json);
-								if(json.dupExists != 0){
-									$("#numOfNights").val(1); //숙박일수를 1로 초기화한다.
-									alert("중복된 예약이 있습니다. 다른 날짜 또는 숙박일수를 선택해 주십시오.");
-								}
-							});
-					 };	
+				//				type:"POST", //HTTP 요청 방식
+				//				dataType:"json" //서버에서 보내줄 데이터의 타입
+				//			})
+				//			//HTTP 요청이 성공하면 요청한 데이터가 done() 메소드로 전달됨.
+				//			.done(function(json){
+				//				console.log(json);
+				//				if(json.dupExists != 0){
+				//					$("#numOfNights").val(1); //숙박일수를 1로 초기화한다.
+				//					alert("중복된 예약이 있습니다. 다른 날짜 또는 숙박일수를 선택해 주십시오.");
+				//				}
+				//			});
+				//	 };	
 			  //]]>
 			</script>			
 		</div>

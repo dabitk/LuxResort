@@ -349,11 +349,18 @@
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
 		      </li>
-		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
-		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+		      <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+			      <li class="nav-item" style="padding-left:100px">
+			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			      </li>				
+  				</c:when>
+  				<c:otherwise>
+			      <li calss="nav-item" style="padding-left:100px">
+			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      </li>
+  				</c:otherwise>
+  			</c:choose>
 		    </ul>		   		
 		</div>
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -385,7 +392,7 @@
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
 				<c:choose>
 					<c:when test="${!resv_list.isEmpty()}">
-						<table align=center width=800 cellspacing=1 border=1>
+						<table align=center style="width:100%" cellspacing=1 border=1>
 							<TR><TH class="calendr">일자</TH><TH class="room1">럭셔리 클럽 스위트</TH><TH class="room2">로열 스위트</TH><TH class="room3">프리미어 디럭스</TH></TR>
 							<c:forEach var="a" items="${resv_list}">
 							<TR>
@@ -417,7 +424,7 @@
 								<c:choose>
 									<c:when test="${a.room1 ne '예약가능'}">
 										<TD class="room1"><c:out value="${a.room1}"/></TD>
-									</c:when>									
+											</c:when>									
 									<c:otherwise>
 										<TD class="room1"><a href="d_02.jsp?room=1&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room1}"/></a></TD>
 									</c:otherwise>								

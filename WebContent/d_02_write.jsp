@@ -218,26 +218,26 @@
 <body id="page-top">
 <%
 	request.setCharacterEncoding("utf-8");
-	reservationDAO bbs = reservationDAO.getInstance();
-	String name = request.getParameter("name");
-	String checkin = request.getParameter("checkin");
-	int numOfNights = Integer.parseInt(request.getParameter("numOfNights"));
-	int room = Integer.parseInt(request.getParameter("room"));
-	String addr = request.getParameter("addr");
-	String telnum = request.getParameter("telnum");
-	String in_name = request.getParameter("in_name");
-	String comment = request.getParameter("comment");
+	reservationDAO bbs = reservationDAO.getInstance(); //DAO객체를 얻는다.
+	String name = request.getParameter("name"); //예약한 사람 이름
+	String checkin = request.getParameter("checkin"); //체크인 날짜
+	int numOfNights = Integer.parseInt(request.getParameter("numOfNights")); //숙박일수. 체크인 날짜 + 숙박일수한 기간만큼 예약이 들어감.
+	int room = Integer.parseInt(request.getParameter("room")); //예약하고자 하는 객실.
+	String addr = request.getParameter("addr"); //주소
+	String telnum = request.getParameter("telnum"); //전화번호
+	String in_name = request.getParameter("in_name"); //입금자명
+	String comment = request.getParameter("comment"); //남기실말
 
 	//
 	String write_date = request.getParameter("write_date");
-	int processing = 1;
+	int processing = 1; //처음 예약시에는 processing 값은 1로 고정.
 	//
 	int errorcode =0;
 	reservationVO singleResv;
-	//새글을 씀 key=INSERT 
-	//수정 key=글번호	
 	
-	errorcode = bbs.makeReservation(name,checkin,numOfNights,room,addr,telnum,in_name,comment,write_date,processing);
+	errorcode = bbs.makeReservation(name,checkin,numOfNights,room,addr,telnum,in_name,comment,write_date,processing); //예약을 처리함.
+	//에러없으면 errorcode == 0
+	//에러발생시 errorcode != 0
 	
 		
 	pageContext.setAttribute("errorcode", errorcode);
@@ -360,11 +360,18 @@
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
 		      </li>
-		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
-		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+		      <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+			      <li class="nav-item" style="padding-left:100px">
+			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			      </li>				
+  				</c:when>
+  				<c:otherwise>
+			      <li calss="nav-item" style="padding-left:100px">
+			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      </li>
+  				</c:otherwise>
+  			</c:choose>
 		    </ul>		   		
 		</div>
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">

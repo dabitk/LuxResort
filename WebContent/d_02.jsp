@@ -12,7 +12,7 @@
   <meta name="description" content="">
   <meta name="author" content="dabitk">
   <script src="https://kit.fontawesome.com/c0559a0b41.js" crossorigin="anonymous"></script>
-  <title>관리자 예약현황 게시판입니다.</title>
+  <title>예약 신청 페이지 입니다.</title>
 
   <!-- 정후 커스텀: T맵 API -->
   <script script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appkey=l7xxdf613ea839e844f09766f70c6562a462"></script>
@@ -399,11 +399,18 @@
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
 		      </li>
-		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
-		      </li>
-		      <li calss="nav-item" style="padding-left:100px">
-		      	<a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+		      <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+			      <li class="nav-item" style="padding-left:100px">
+			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			      </li>				
+  				</c:when>
+  				<c:otherwise>
+			      <li calss="nav-item" style="padding-left:100px">
+			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      </li>
+  				</c:otherwise>
+  			</c:choose>
 		    </ul>		   		
 		</div>
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
@@ -435,7 +442,7 @@
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
 			<div>
 				<FORM method="POST" name="form" id="form">
-				<table align=center width=800 cellspacing=1 border=1>
+				<table align=center style="width:100%" cellspacing=1 border=1>
 				<TR>
 				<th>성명</th>
 				<td><input type="text" name="name" maxlength="6" autocomplete=off required/></td>		
