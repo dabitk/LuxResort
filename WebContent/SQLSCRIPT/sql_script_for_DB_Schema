@@ -1,0 +1,467 @@
+DELIMITER $$
+DROP PROCEDURE IF EXISTS prepare_data$$
+CREATE PROCEDURE prepare_data()
+BEGIN
+	DECLARE i INT DEFAULT 1;
+	DECLARE num1 INT DEFAULT 0;
+	DECLARE num2 INT DEFAULT 0;
+	DECLARE num3 INT DEFAULT 0;
+	DECLARE id VARCHAR(30) DEFAULT 'dummy';
+	
+	WHILE i<=1000 DO
+	SET num1=ROUND((RAND()*(100-1))+1);
+	SET num2=ROUND((RAND()*(100-1))+1);
+	SET num3=ROUND((RAND()*(100-1))+1);
+	SET id=CONCAT('dummy',i);
+	INSERT INTO examtable (name,kor,eng,mat) VALUES(id,num1,num2,num3);
+	SET i=i+1;
+
+	END WHILE;
+END $$
+DELIMITER ;
+
+CALL prepare_data();
+
+SELECT * FROM examtable;
+
+SELECT student_rank,NAME,studentid,kor,eng,mat,total,average FROM
+(SELECT NAME,studentid,kor,eng,mat,total,average,
+CASE
+WHEN @prev_value = average THEN @rank
+WHEN @prev_value := average THEN @rank := @rank+1
+END AS student_rank 
+ FROM(
+SELECT 
+	NAME,
+	studentid,
+	kor,
+	eng,
+	mat,
+	kor+eng+mat AS total,
+	(kor+eng+mat)/3 AS average
+FROM examtable)AS a, (SELECT @rank := 0, @prev_value := NULL) AS b
+ORDER BY average DESC) AS c;
+
+
+SELECT name,studentid,kor,eng,mat,total,average,
+   IF(average=@prev_value,@curRank:=@curRank,@curRank:=@_sequence) AS rank,
+   @_sequence:=@_sequence+1,@prev_value:=average
+FROM (SELECT NAME,studentid,kor,eng,mat,kor+eng+mat AS total, (kor+eng+mat)/3 AS average FROM examtable) a, (SELECT @curRank := 1, @_sequence:=1, @prev_value:=0) b
+ORDER BY  average DESC;
+
+examtable
+SELECT MIN(studentid+1) FROM examtable WHERE (studentid+1) NOT IN (SELECT studentid FROM examtable);
+
+DROP TABLE examtable;
+
+
+
+CREATE TABLE visitcount (
+	counter INT NOT NULL auto_increment PRIMARY KEY)
+DEFAULT CHARSET=UTF8;
+ 
+INSERT INTO visitcount(counter) VALUES(1);
+
+CREATE TABLE hubo_table(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+	NAME VARCHAR(20)
+)DEFAULT CHARSET=UTF8;
+ALTER TABLE hubo_table auto_increment = 1;
+
+CREATE TABLE tupyo_table(
+	 id INT NOT NULL,
+	 age INT NOT NULL,
+	 FOREIGN KEY (id) REFERENCES hubo_table(id)
+	 ON DELETE cascade
+)DEFAULT CHARSET=UTF8;
+ALTER TABLE tupyo_table ADD COLUMN numVote INT DEFAULT 0;
+
+INSERT INTO hubo_table(name) VALUES('문재인');
+INSERT INTO hubo_table(NAME) VALUES('홍준표');
+INSERT INTO hubo_table(NAME) VALUES('김정수');
+SELECT * FROM hubo_table;
+SELECT * FROM tupyo_table;
+SELECT a.id, b.NAME,a.age,a.numVote FROM tupyo_table a JOIN hubo_table b ON a.id = b.id WHERE a.id=1;
+SELECT DISTINCT a.id, b.NAME FROM tupyo_table a JOIN hubo_table b ON a.id = b.id;
+DELETE FROM hubo_table WHERE id=10;
+
+SELECT c.id, c.NAME, SUM(numVote) FROM (SELECT a.id, b.NAME,a.age,a.numVote FROM tupyo_table a JOIN hubo_table b ON a.id = b.id) c GROUP BY c.id, c.name;
+
+Insert INTO tupyo_table(id, age) VALUE(1,2);
+SELECT * FROM hubo_table WHERE id =  ( SELECT MIN(id) FROM hubo_table);
+DROP TABLE tupyo_table;
+DROP TABLE hubo_table;
+
+SELECT MIN(unused) AS unused
+FROM(
+	SELECT MIN(t1.id)+1 AS unused
+	FROM hubo_table AS t1
+	WHERE NOT EXISTS (SELECT * FROM hubo_table AS t2
+	WHERE t2.id = t1.id+1)
+	UNION
+	SELECT 1
+	FROM DUAL
+	WHERE NOT EXISTS(SELECT * FROM hubo_table WHERE id = 1)
+	)AS subquery;
+	
+UPDATE tupyo_table SET numVote=numVote+1 WHERE id=1 AND age=1;
+update examtable SET numVote='"+name+"', kor="+kor+", eng="+eng+",mat="+mat+" where studentid="+SID+";
+
+
+SELECT * FROM examtable;
+
+SELECT MIN(unused) AS unused
+FROM(
+	SELECT MIN(a.studentid)+1 AS unused
+	FROM examtable AS a
+	WHERE NOT EXISTS (SELECT * FROM examtable AS b
+	WHERE b.studentid = a.studentid+1)
+	UNION
+	SELECT 209901
+	FROM DUAL
+	WHERE NOT EXISTS(SELECT * FROM examtable WHERE studentid = 209901)
+	)AS subquery;
+	
+	
+	
+CREATE TABLE gongii(
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+title VARCHAR(70) NOT NULL,
+DATE DATE NOT NULL,
+content TEXT NOT NULL)
+DEFAULT CHARSET=UTF8;
+
+ALTER TABLE gongii AUTO_INCREMENT=1;
+
+SET LAST_INSERT_ID = 0;
+
+SELECT last_insert_id();
+
+ALTER TABLE gongii DROP rootid;
+ALTER TABLE gongii DROP relevel;
+ALTER TABLE gongii DROP recnt;
+ALTER TABLE gongii DROP viewcnt;
+	
+ALTER TABLE gongii ADD rootid INT DEFAULT 1;
+ALTER TABLE gongii ADD relevel INT;
+ALTER TABLE gongii ADD recnt INT DEFAULT 0;
+ALTER TABLE gongii ADD viewcnt INT DEFAULT 0;
+	
+	
+DROP TABLE gongii;
+
+TRUNCATE TABLE gongii;
+
+ALTER TABLE gongii ADD COLUMN numVote INT DEFAULT 0;
+	
+SELECT * FROM gongii;
+
+SELECT date FROM gongii;	
+	
+DESC gongii;
+	
+
+
+CREATE TRIGGER auto_inc_recnt
+AFTER INSERT ON gongii
+FOR EACH ROW UPDATE gongii SET gongii.recnt = gongii.recnt+1 WHERE gongii.recnt > NEW.recnt;
+
+SHOW TRIGGERS;
+DROP TRIGGER auto_inc_recnt;
+
+INSERT INTO gongii(title,date,content,rootid,relevel,recnt) VALUES('das',CURDATE(),'fuda',(SELECT last_insert_id()+1),1,1);
+
+SELECT NAME,studentid,kor,eng,mat,total,average,rank FROM (SELECT name,studentid,kor,eng,mat,total,average, 
+IF(average=@prev_value,@curRank:=@curRank,@curRank:=@_sequence) AS rank,
+@_sequence:=@_sequence+1,@prev_value:=average 
+FROM (SELECT NAME,studentid,kor,eng,mat,kor+eng+mat AS total, (kor+eng+mat)/3 AS average FROM examtable) a,
+(SELECT @curRank := 1, @_sequence:=1, @prev_value:=0) b
+ORDER BY average DESC)AS result ORDER BY studentid;
+	
+	
+SELECT * FROM gongii ORDER BY id DESC LIMIT 1, 10;	
+	
+INSERT INTO gongii(title,date,content) VALUES('공쥐1',CURDATE(),'팜쥐1');
+INSERT INTO gongii(title,date,content) VALUES('공쥐2',CURDATE(),'팜쥐2');
+INSERT INTO gongii(title,date,content) VALUES('공쥐3',CURDATE(),'팜쥐3');	
+
+
+SELECT id,title,date,content from gongii where id = max(id);
+
+SELECT * FROM gongii ORDER BY id DESC LIMIT 1;
+
+SELECT * FROM gongii;
+
+UPDATE gongii SET title='KONGGII100', content='KONGZEEEE1000' WHERE id=1;
+DELETE FROM gongii WHERE id=2;
+
+CREATE TABLE inventory(
+itemId	INT NOT null,
+itemName VARCHAR(20) NOT NULL,
+itemNo	INT NOT NULL,
+registerDate DATE NOT NULL,
+checkDate	DATE NOT NULL,
+itemDesc VARCHAR(200),
+itemImg VARCHAR(50),
+PRIMARY KEY(itemID, itemName)
+)
+DEFAULT CHARSET=UTF8;
+
+DROP table inventory;
+
+SELECT * FROM inventory;
+INSERT INTO inventory(itemId,itemName,itemNo,registerDate,checkDate,itemDesc,itemImg) VALUES(122122,'바나나',10,CURDATE(),CURDATE(),'맘모스바나나','아몰랑');
+INSERT INTO inventory(itemId,itemName,itemNo,registerDate,checkDate,itemDesc,itemImg) VALUES(122123,'따알기',10,CURDATE(),CURDATE(),'맘모스따알기','아몰랑');
+INSERT INTO inventory(itemId,itemName,itemNo,registerDate,checkDate,itemDesc,itemImg) VALUES(122124,'사아과',10,CURDATE(),CURDATE(),'맘모스사아과','아몰랑');
+INSERT INTO inventory(itemId,itemName,itemNo,registerDate,checkDate,itemDesc,itemImg) VALUES(122125,'배애애',10,CURDATE(),CURDATE(),'맘모스배애애','아몰랑');
+INSERT INTO inventory(itemId,itemName,itemNo,registerDate,checkDate,itemDesc,itemImg) VALUES(122125,'참외애',10,CURDATE(),CURDATE(),'맘모스참외애','아몰랑');
+
+SELECT * FROM inventory ORDER BY itemId DESC, itemName ASC LIMIT 0,3;
+
+SELECT * FROM inventory where itemId=122125 AND  itemName='배애애';
+UPDATE inventory SET itemNo = 999, checkDate=CURDATE() WHERE itemId=122125 AND itemName='배애애';
+DELETE from inventory WHERE itemId=122125 AND itemName='배애애';
+
+ALTER TABLE inventory MODIFY itemImg VARCHAR(200);	
+ALTER TABLE inventory MODIFY itemDesc VARCHAR(2000);	
+
+SELECT * FROM inventory LIMIT 1,10;
+
+SELECT COUNT(*) FROM inventory;
+
+update visitcount SET counter=counter+1;
+
+SELECT * FROM visitcount;
+
+
+SELECT * FROM inventory ORDER BY itemId desc;
+SELECT COUNT(*) FROM inventory;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS prepare_InventoryItems$$
+CREATE PROCEDURE prepare_InventoryItems()
+BEGIN
+	DECLARE i INT DEFAULT 900000;
+	DECLARE n VARCHAR(20) DEFAULT 'dummy';
+	DECLARE leftover INT DEFAULT 50;
+	DECLARE d VARCHAR(200) DEFAULT 'dummy';
+	DECLARE e VARCHAR(30) DEFAULT 'dummy';
+	
+	WHILE i<=900100 DO
+	INSERT INTO inventory (itemId,itemName,itemNo,registerDate,checkDate,itemDesc,itemImg) VALUES(i,'dummy',leftover,CURDATE(),CURDATE(),'dummy','dummy');
+	SET i=i+1;
+
+	END WHILE;
+END $$
+DELIMITER ;
+
+CALL prepare_InventoryItems();
+
+INSERT INTO inventory (itemId,itemName,itemNo,registerDate,checkDate,itemDesc,itemImg) VALUES(800000,'dummy',50,CURDATE(),CURDATE(),'dummy','dummy');
+
+SELECT * FROM (SELECT * FROM inventory ORDER BY itemId ASC LIMIT 90, 5) a ORDER BY itemId DESC;
+
+TRUNCATE TABLE inventory;
+
+-----예약관리 시스템-----
+CREATE TABLE luxresv(
+	NAME VARCHAR(20),
+	resv_date DATE NOT NULL,
+	room INT NOT NULL,
+	addr VARCHAR(100),
+	telnum VARCHAR(20),
+	in_name VARCHAR(20),
+	COMMENT TEXT,
+	write_date DATE,
+	processing INT,
+	PRIMARY KEY(resv_date,room))
+	DEFAULT CHARSET=UTF8;
+
+DROP TABLE luxresv;
+
+SELECT * FROM luxresv ORDER BY write_date DESC, NAME ASC, resv_date ASC;
+
+SELECT DAYOFWEEK(resv_date) FROM luxresv
+
+SELECT ADDDATE("2020-01-15", INTERVAL 1 DAY);
+
+SELECT NAME FROM luxresv WHERE resv_date='2020-01-14' AND room = 1
+UNION ALL
+SELECT NAME FROM luxresv  WHERE resv_date='2020-01-14' AND room = 2
+UNION ALL
+SELECT NAME FROM luxresv WHERE resv_date='2020-01-14' AND room = 3;
+
+	SELECT resv_date,
+	(SELECT NAME FROM luxresv WHERE resv_date=sDay AND room = 1) room1,
+	(SELECT NAME FROM luxresv WHERE resv_date=sDay AND room = 2) room2,
+	(SELECT NAME FROM luxresv WHERE resv_date=sDay AND room = 3) room3
+	 FROM luxresv;	
+
+DESC luxresv; #luxrev의 정보를 조회하는 명령.
+
+DELETE FROM luxresv WHERE resv_date='2020-01-15' AND room = 1; #레코드 삭제하는 쿼리
+
+SELECT * FROM luxresv;
+
+UPDATE luxresv SET processing=2 WHERE room=1 AND resv_date = '2020-01-24';
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS luxresv_monthly$$
+CREATE PROCEDURE luxresv_monthly(startdate Date, enddate Date)
+BEGIN
+	DECLARE sDay DATE;
+	DECLARE nextDay DATE;
+	SET sDay = startdate;
+	SET nextDay = enddate;
+	
+	repeat
+	SELECT sDay;
+	
+	SET sDay = sDay+1;
+	until sDay >= nextDay
+	END repeat;
+	
+
+END $$
+DELIMITER ;
+
+CALL luxresv_monthly('2020-01-14','2020-01-16');
+
+TRUNCATE TABLE luxresv;
+
+SELECT resv_date,
+(SELECT NAME FROM luxresv WHERE resv_date='2020-01-15' AND room = 1) room1,
+(SELECT NAME FROM luxresv WHERE resv_date='2020-01-14' AND room = 2) room2,
+(SELECT NAME FROM luxresv WHERE resv_date='2020-01-14' AND room = 3) room3
+ FROM luxresv;
+
+SELECT resv_date, NAME, room  FROM luxresv WHERE (resv_date BETWEEN '2020-01-14' AND '2020-01-15');
+
+
+SELECT resv_date, 
+       ISNULL(MAX(CASE WHEN room = 1 THEN NAME END),'예약가능') room1,
+       ISNULL(MAX(CASE WHEN room = 2  THEN NAME END),'예약가능') room2,
+		 ISNULL(MAX(CASE WHEN room = 3 THEN NAME END),'예약가능') room3
+  FROM luxresv 
+ GROUP BY resv_date;
+ 
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+VALUES ('김정후',ADDDATE('2020-01-14',INTERVAL 2 DAY),2,'폴리텍융기원','111-1111-1111','김정후','ㅇㅇㅇ','2020-01-14',1);
+ 
+ SELECT COUNT(*) FROM luxresv WHERE resv_date=ADDDATE('2020-01-17', INTERVAL 0 DAY);
+ 
+ SELECT * FROM luxresv;
+ 
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('김정후', '2020-01-14',1,'폴리텍 융기원','010-7304-6388','김정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('북정후', '2020-01-14',2,'폴리텍 융기원','010-7304-6388','김정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('곱정후', '2020-01-14',3,'폴리텍 융기원','010-7304-6388','김정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ 
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('홍정후', '2020-01-15',1,'폴리텍 융기원','010-7304-6388','홍정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('킹정후', '2020-01-15',2,'폴리텍 융기원','010-7304-6388','홍정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('황제정후', '2020-01-15',3,'폴리텍 융기원','010-7304-6388','홍정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ 
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('문정후', '2020-01-16',1,'폴리텍 융기원','010-7304-6388','문정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('갓정후', '2020-01-16',2,'폴리텍 융기원','010-7304-6388','문정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('엠페러정후', '2020-01-16',3,'폴리텍 융기원','010-7304-6388','문정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ 
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('안정후', '2020-01-17',1,'폴리텍 융기원','010-7304-6388','안정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('강정후', '2020-01-17',2,'폴리텍 융기원','010-7304-6388','안정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ INSERT INTO luxresv (NAME,resv_date,room,addr,telnum,in_name,COMMENT,write_date,processing)
+ VALUES('넝정후', '2020-01-17',3,'폴리텍 융기원','010-7304-6388','안정후','알아서 잘 처리 해주세요','2020-01-14',1);
+ 
+ CREATE TABLE admininfo(
+ 	id VARCHAR(20) PRIMARY KEY NOT NULL,
+ 	pass VARCHAR(20))
+ DEFAULT CHARSET="utf8";
+ 	
+ INSERT INTO admininfo(id,pass) VALUES ('admin','1111');
+ 
+ SELECT * FROM admininfo;
+ 
+ 
+ 
+CREATE TABLE Qna(
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+title VARCHAR(70) NOT NULL,
+DATE DATE NOT NULL,
+content TEXT NOT NULL,
+rootid INT DEFAULT 1,
+relevel INT,
+recnt INT DEFAULT 0,
+viewcnt INT DEFAULT 0)
+DEFAULT CHARSET=UTF8;
+
+ALTER TABLE Qna AUTO_INCREMENT=1;	
+
+DROP TABLE Qna;
+
+ALTER TABLE Qna DROP rootid;
+ALTER TABLE Qna DROP relevel;
+ALTER TABLE Qna DROP recnt;
+ALTER TABLE Qna DROP viewcnt;
+
+ALTER TABLE Qna AUTO_INCREMENT=1;	
+ALTER TABLE Qna ADD rootid INT DEFAULT 1;
+ALTER TABLE Qna ADD relevel INT;
+ALTER TABLE Qna ADD recnt INT DEFAULT 0;
+ALTER TABLE Qna ADD viewcnt INT DEFAULT 0;
+
+
+SELECT * FROM Qna ORDER BY rootid DESC, recnt ASC;
+SELECT IFNULL(MAX(recnt),1) FROM Qna WHERE rootid = 3 AND relevel=2;
+#댓글 삽입시 부모 relevel+1이고 rootid가 같은 레코드 중에 가장 큰수를 찾아서 +1 한 값을 새로 입력하는 댓글의 recnt로 한다. null인 경우는 0으로 replace
+UPDATE Qna SET recnt = 4 WHERE id = 5;
+
+UPDATE Qna SET recnt = recnt+1 WHERE rootid = 3 AND recnt >= 0+1; #부모 recnt+1과 같거나 더 큰 레코드에 대해서 recnt+1을 해둠. 
+#reinst를 통해 삽입되는 레코드는 부모 relevel+1의 relevel을 갖는다. 부모 relevel+1중에서는 가장 큰 recnt+1의 값을 갖는다.
+
+TRUNCATE TABLE Qna;
+
+SELECT MAX(recnt) FROM Qna WHERE rootid = 3 AND relevel=+1; 
+
+#현재 최대 relevel을 반환하는 쿼리를 작성.
+#삽입하려는 글의 relevel을 비교해서 최대 relevel인지 아닌지 판별
+# 1 - 최대 relevel에 삽입하는 경우는 가장 큰 recnt+1위치에 삽이
+# 2 - 그렇지 않은 경우는 ___ 해서 뒤의 글들을 전부 밀어내고 삽입
+
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-4',CURDATE(),'팜쥐3-4',3,1,7,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1-1',CURDATE(),'팜쥐3-1-1',3,2,2,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1-2',CURDATE(),'팜쥐3-1-2',3,2,3,0);
+
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐1',CURDATE(),'팜쥐1',1,0,0,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐2',CURDATE(),'팜쥐2',2,0,0,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3',CURDATE(),'팜쥐3',3,0,0,0);	
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1',CURDATE(),'팜쥐3-1',3,1,1,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐2-1',CURDATE(),'팜쥐2-1',2,1,2,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐2-1',CURDATE(),'팜쥐2-2',2,1,3,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐2-1-1',CURDATE(),'팜쥐2-1-1',2,2,3,0);
+UPDATE Qna SET recnt = recnt+1 WHERE rootid=2 AND relevel=1;
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐2-3',CURDATE(),'팜쥐2-3',2,1,6,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐2-2-1',CURDATE(),'팜쥐2-2-1',2,2,6,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-2',CURDATE(),'팜쥐3-2',3,1,3,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-3',CURDATE(),'팜쥐3-3',3,1,4,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1-1',CURDATE(),'팜쥐3-1-1',3,2,3,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1-1',CURDATE(),'팜쥐3-1-1',3,2,,0);
+
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1',CURDATE(),'팜쥐3-3',3,1,3,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-2-1',CURDATE(),'팜쥐3-2-1',3,2,3,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1-1',CURDATE(),'팜쥐3-1-1',3,2,2,0);
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1-1-1',CURDATE(),'팜쥐3-1-1-1',3,3,3,0);
+
+INSERT INTO Qna(title,date,content,rootid,relevel,recnt,viewcnt) VALUES('공쥐3-1-1',CURDATE(),'팜쥐3-1-1',3,2,2,0);
+
+
+
+
+
