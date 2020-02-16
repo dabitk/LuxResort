@@ -217,16 +217,14 @@
 
 	pageContext.setAttribute("list",list); //페이지 컨텍스트에 list 속성을 지정한다
 %>
-  <!-- Navigation -->
-  <!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">-->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top shrink" id="mainNav">
-  	<div class="navbar-top" style="width:100%">
+  	<div class="navbar-top">
   		<div class="navbar-top--left"></div>
   		<div class="navbar-top--right">
-  			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
+  			<a class="navbar-top-HOME" href="./index.jsp"">HOME</a>
   			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
   			<c:choose>
-  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' || sessionScope.login_ok eq 'yes'}">
 		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
 		  				LOG OUT
 		  			</a>  				
@@ -254,41 +252,46 @@
     
       <a class="navbar-brand js-scroll-trigger" href="#page-top">
       	<span>
-      		<img src="./img/logos/logo.jpg" style="max-width: 30%">
+      		<img src="/LuxResort/img/logos/logo.jpg" style="max-width: 30%">
       	</span>
 		<span style="display:inline-block; vertical-align:top">
 		    <h2 class="hotel-name">럭셔리조트</h2>
       		<h3 class="hotel-slogan" style="margin:0">Your Story. Make History.</h3>
 		</span>      
       </a>
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        Menu
-        <i class="fas fa-bars"></i>
-      </button>
-       <div class="collapse navbar-collapse" id="navbarResponsive" data-toggle="collapse" data-target="#navbarResponsive2" aria-controls="navbarResponsive2" aria-expanded="false" aria-label="Toggle navigation2">
+		<span>
+	      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+	        Menu
+	        <i class="fas fa-bars"></i>
+	      </button>
+		</span>
+	<div class="collapse navbar-collapse" id="navbarResponsive" data-toggle="collapse" data-target="" aria-controls="navbarResponsive2" aria-expanded="false" aria-label="Toggle navigation2">
         <ul class="navbar-nav text-uppercase ml-auto">
-          <li class="nav-item" style="min-width: 150px" id="introduction">
+          <li class="nav-item" style="min-width: 150px" id ="introduction" >
             <a class="nav-link js-scroll-trigger" href="#">리조트소개</a>           
           </li>
-          <li class="nav-item" style="min-width: 150px" id ="findhere">
+          <li class="nav-item" style="min-width: 150px" id = "findhere" >
             <a class="nav-link js-scroll-trigger" href="#">다이닝</a>
           </li>
-          <li class="nav-item" style="min-width: 150px" id="toursite">
+          <li class="nav-item" style="min-width: 150px" id="toursite" >
             <a class="nav-link js-scroll-trigger" href="#">부대시설</a>
           </li>
-          <li class="nav-item" style="min-width: 150px" id ="mkreservation">
+          <li class="nav-item" style="min-width: 150px" id ="mkreservation" >
             <a class="nav-link js-scroll-trigger" href="#">예약하기</a>
           </li>
-          <li class="nav-item" style="min-width: 150px" id="notice">
+          <li class="nav-item" style="min-width: 150px" id="notice" >
             <a class="nav-link js-scroll-trigger" href="#">팬션소식</a>
           </li>
-        </ul>
-      </div>    
+        </ul>    
+      </div>
     </div>
      <div class="container">
 	    <div id="navbarResponsive2" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>리조트소개 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>		    
 		      <li class="nav-item active" style="padding-left:100px">
 		        <a class="nav-link"  href="a_01.jsp">럭셔리 클럽 스위트</span></a>
 		      </li>
@@ -302,7 +305,10 @@
 		</div>
 	    <div id="navbarResponsive3" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>다이닝 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>					    
 		      <li class="nav-item active" style="padding-left:100px">
 		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
@@ -316,7 +322,10 @@
 		</div>
 	    <div id="navbarResponsive4" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>부대시설 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>				    
 		      <li class="nav-item active" style="padding-left: 100px">
 		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
@@ -325,24 +334,29 @@
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
 		        <a class="nav-link" href="c_03.jsp">대연회장</a>
-		      </li>
-		    </ul>		   		
+		      </li>  		
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>예약하기 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>				    
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
+		        <a class="nav-link"  href="d_01.jsp">예약 상황</a>
+		      </li>
+		      <li class="nav-item" style="padding-left:100px">
+		      	<a class="nav-link" href="d_02.jsp">객실 예약</a>
 		      </li>
 		      <c:choose>
   				<c:when test="${sessionScope.login_ok eq 'yes' }">
 			      <li class="nav-item" style="padding-left:100px">
-			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			        <a class="nav-link"  href="admin_logout.jsp">관리자 로그아웃</a>
 			      </li>				
   				</c:when>
   				<c:otherwise>
 			      <li calss="nav-item" style="padding-left:100px">
-			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      	<a class="nav-link"  href="admin_login.jsp">관리자 페이지</a>
 			      </li>
   				</c:otherwise>
   			</c:choose>
@@ -351,15 +365,18 @@
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>팬션소식 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>			    
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="e_01.jsp">공지사항 게시판</span></a>
+		        <a class="nav-link"  href="e_01.jsp">공지사항</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="e_02.jsp">답글 게시판</a>
+		        <a class="nav-link"  href="e_02.jsp">Q & A</a>
 		      </li>
 		    </ul>		   		
 		</div>						      	
-    </div> 
+    </div>
   </nav>
 
   <!-- Services -->
@@ -377,7 +394,7 @@
 		<!-- 이곳에 공지사항 게시판을 추가한다. -->
 			<c:choose>
 				<c:when test="${!list.isEmpty()}">
-					<table class="gongiiT" align=center cellspacing=1 border=1 style="text-align:left;border-left:none;border-right:none;">
+					<table class="gongiiT" align=center cellspacing=1 border=1 style="text-align:left;border-left:none;border-right:none;width:100%">
 						<TR><TH class="key">번호</TH><TH class="title">제목</TH><TH class="viewCnt">조회수</TH><TH class="registerDate">등록일</TH></TR>
 						<c:forEach var="article" items="${list}">
 						<c:set var="myVar" value='${article.title}' />
@@ -387,14 +404,14 @@
 							 <c:when test="${fn:contains(myVar,'[Re]')}">
 								<TD class="title">
 								<a href="e_gongii_View.jsp?key=${article.id}">
-									<img id="reTag" src="/BbsProject/img/images.png" style="padding-left:${article.relevel-1}0px" width="5%" height="5%">
+									<img id="reTag" src="<%=request.getContextPath()%>/img/arrow.png" style="padding-left:${article.relevel-1}0px" width="5%" height="5%">
 									<c:out value="${myVar}"/>
 								</a>
 								</TD>
 							</c:when>
 							<c:when test="${fn:contains(myVar,'삭제')}">
 								<TD class="title">
-									<img id="reTag" src="/BbsProject/img/images.png" style="padding-left:${article.relevel-1}0px" width="5%" height="5%">
+									<img id="reTag" src="<%=request.getContextPath()%>/img/arrow.png" style="padding-left:${article.relevel-1}0px" width="5%" height="5%">
 									<c:out value="${myVar}"/>
 								</TD>
 							</c:when>

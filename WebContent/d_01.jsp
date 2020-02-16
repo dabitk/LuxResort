@@ -229,6 +229,41 @@
 	
 	resv_list=resv.getBookingInfo();	//첫번째 행부터 15개를 DB로부터 가져온다
 	
+	String loginOK = (String)session.getAttribute("login_ok");
+	
+
+	if((loginOK!=null && !loginOK.equals("yes")) || loginOK == null && !resv_list.isEmpty()){
+		
+		//다음 조건에 해당 되었을 때 예약자 이름에 대해 전처리를 수행한다. 관리자 로그인시 풀네임 출력, 관리자 미로그인시 이름 중간에 * 출력.
+		//1. 관리자가 아닌 회원으로서 로그인 한 상태이면서 리스트가 비어있지 않는 경우
+		//2. 관리자 로그인 안되있으면서 리스트가 비어있지 않는 경우
+		
+		for(calendarVO a:resv_list){
+			if(!a.getRoom1().equals("예약가능")){ //이미 예약이 된 객실에 대해서만 전처리를 수행한다.
+				if(a.getRoom1().length() == 2){ //객실1의 예약명이 2글자 길이인 경우 ex) 예약자명: 전진 -> 전*
+					a.setRoom1(a.getRoom1().replace(a.getRoom1().charAt(1),'*'));
+				}else if(a.getRoom1().length() >= 3){//객실1의 예약명이 3글자 이상인 경우 첫글자와 마지막 글자를 제외한 글자를 *로 출력
+													 //ex) 예약자명: 김정후 -> 김*후, 앙드레김 -> 앙*김
+					a.setRoom1(a.getRoom1().replace(a.getRoom1().substring(1,a.getRoom1().length()-1),"*"));
+				}
+			}
+			if(!a.getRoom2().equals("예약가능")){
+				if(a.getRoom2().length() == 2){ //관리자 미로그인 시 객실2 예약명 전처리
+					a.setRoom2(a.getRoom2().replace(a.getRoom2().charAt(1),'*'));
+				}else if(a.getRoom2().length() >= 3){
+					a.setRoom2(a.getRoom2().replace(a.getRoom2().substring(1,a.getRoom2().length()-1),"*"));
+				}
+			}
+			if(!a.getRoom3().equals("예약가능")){
+				if(a.getRoom3().length() == 2){ //관리자 미로그인 시 객실3 예약명 전처리
+					a.setRoom1(a.getRoom3().replace(a.getRoom3().charAt(1),'*'));
+				}else if(a.getRoom3().length() >= 3){
+					a.setRoom3(a.getRoom3().replace(a.getRoom3().substring(1,a.getRoom3().length()-1),"*"));
+				}
+			}
+		}
+	}
+	
 	//pageContext.setAttribute("holidayList",holidayList);
 	pageContext.setAttribute("resv_list",resv_list); //페이지 컨텍스트에 list 속성을 지정한다
 %>
@@ -241,7 +276,7 @@
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
   			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
   			<c:choose>
-  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' || sessionScope.login_ok eq 'yes'}">
 		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
 		  				LOG OUT
 		  			</a>  				
@@ -304,6 +339,9 @@
 	    <div id="navbarResponsive2" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>리조트소개 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>		    
 		      <li class="nav-item active" style="padding-left:100px">
 		        <a class="nav-link"  href="a_01.jsp">럭셔리 클럽 스위트</span></a>
 		      </li>
@@ -318,6 +356,9 @@
 	    <div id="navbarResponsive3" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>다이닝 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>					    
 		      <li class="nav-item active" style="padding-left:100px">
 		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
@@ -332,6 +373,9 @@
 	    <div id="navbarResponsive4" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>부대시설 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>				    
 		      <li class="nav-item active" style="padding-left: 100px">
 		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
@@ -345,19 +389,25 @@
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>예약하기 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>				    
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
+		        <a class="nav-link"  href="d_01.jsp">예약 상황</a>
+		      </li>
+		      <li class="nav-item" style="padding-left:100px">
+		      	<a class="nav-link" href="d_02.jsp">객실 예약</a>
 		      </li>
 		      <c:choose>
   				<c:when test="${sessionScope.login_ok eq 'yes' }">
 			      <li class="nav-item" style="padding-left:100px">
-			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			        <a class="nav-link"  href="admin_logout.jsp">관리자 로그아웃</a>
 			      </li>				
   				</c:when>
   				<c:otherwise>
 			      <li calss="nav-item" style="padding-left:100px">
-			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      	<a class="nav-link"  href="admin_login.jsp">관리자 페이지</a>
 			      </li>
   				</c:otherwise>
   			</c:choose>
@@ -366,11 +416,14 @@
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>팬션소식 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>			    
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="e_01.jsp">공지사항 게시판</span></a>
+		        <a class="nav-link"  href="e_01.jsp">공지사항</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="e_02.jsp">답글 게시판</a>
+		        <a class="nav-link"  href="e_02.jsp">Q & A</a>
 		      </li>
 		    </ul>		   		
 		</div>						      	
@@ -423,15 +476,31 @@
 								</TD>
 								<c:choose>
 									<c:when test="${a.room1 ne '예약가능'}">
-										<TD class="room1"><c:out value="${a.room1}"/></TD>
-											</c:when>									
+										<!-- 관리자 로그인 되어있는 경우는 이름을 클릭해서 예약수정 페이지로 이동 가능 -->
+										<c:choose>
+											<c:when test="${sessionScope.login_ok eq 'yes' }">
+												<TD class="room1"><a href="admin_oneview.jsp?checkin=<c:out value='${a.calendr}'/>&room=1"><c:out value="${a.room1}"/></a></TD>
+											</c:when>
+											<c:otherwise>
+												<TD class="room1"><c:out value="${a.room1}"/></TD>
+											</c:otherwise>
+										</c:choose>
+									</c:when>									
 									<c:otherwise>
 										<TD class="room1"><a href="d_02.jsp?room=1&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room1}"/></a></TD>
 									</c:otherwise>								
 								</c:choose>
 								<c:choose>
 									<c:when test="${a.room2 ne '예약가능'}">
-										<TD class="room2"><c:out value="${a.room2}"/></TD>
+										<!-- 관리자 로그인 되어있는 경우는 이름을 클릭해서 예약수정 페이지로 이동 가능 -->
+										<c:choose>
+											<c:when test="${sessionScope.login_ok eq 'yes' }">
+												<TD class="room2"><a href="admin_oneview.jsp?checkin=<c:out value='${a.calendr}'/>&room=2"><c:out value="${a.room2}"/></a></TD>
+											</c:when>
+											<c:otherwise>
+												<TD class="room2"><c:out value="${a.room2}"/></TD>
+											</c:otherwise>
+										</c:choose>
 									</c:when>
 									<c:otherwise>
 										<TD class="room2"><a href="d_02.jsp?room=2&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room2}"/></a></TD>
@@ -439,7 +508,15 @@
 								</c:choose>
 								<c:choose>
 									<c:when test="${a.room3 ne '예약가능'}">
-										<TD class="room3"><c:out value="${a.room3}"/></TD>
+										<!-- 관리자 로그인 되어있는 경우는 이름을 클릭해서 예약수정 페이지로 이동 가능 -->
+										<c:choose>
+											<c:when test="${sessionScope.login_ok eq 'yes' }">
+												<TD class="room3"><a href="admin_oneview.jsp?checkin=<c:out value='${a.calendr}'/>&room=3"><c:out value="${a.room3}"/></a></TD>
+											</c:when>
+											<c:otherwise>
+												<TD class="room3"><c:out value="${a.room3}"/></TD>
+											</c:otherwise>
+										</c:choose>
 									</c:when>
 									<c:otherwise>
 										<TD class="room3"><a href="d_02.jsp?room=3&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room3}"/></a></TD>

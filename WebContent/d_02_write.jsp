@@ -252,7 +252,7 @@
   			<a class="navbar-top-HOME" href="./index.jsp">HOME</a>
   			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
   			<c:choose>
-  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' || sessionScope.login_ok eq 'yes'}">
 		  			<a class="navbar-top-LOGIN" href="member_logout.jsp">
 		  				LOG OUT
 		  			</a>  				
@@ -315,6 +315,9 @@
 	    <div id="navbarResponsive2" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>리조트소개 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>		    
 		      <li class="nav-item active" style="padding-left:100px">
 		        <a class="nav-link"  href="a_01.jsp">럭셔리 클럽 스위트</span></a>
 		      </li>
@@ -329,6 +332,9 @@
 	    <div id="navbarResponsive3" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>다이닝 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>					    
 		      <li class="nav-item active" style="padding-left:100px">
 		        <a class="nav-link"  href="b_01.jsp">레스토랑</span></a>
 		      </li>
@@ -343,6 +349,9 @@
 	    <div id="navbarResponsive4" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>부대시설 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>				    
 		      <li class="nav-item active" style="padding-left: 100px">
 		        <a class="nav-link"  href="c_01.jsp">스쿠버다이빙 체험</span></a>
 		      </li>
@@ -356,19 +365,25 @@
 		</div>		
 	    <div id="navbarResponsive5" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
-		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0" >
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>예약하기 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>				    
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="d_01.jsp">예약상황</a>
+		        <a class="nav-link"  href="d_01.jsp">예약 상황</a>
+		      </li>
+		      <li class="nav-item" style="padding-left:100px">
+		      	<a class="nav-link" href="d_02.jsp">객실 예약</a>
 		      </li>
 		      <c:choose>
   				<c:when test="${sessionScope.login_ok eq 'yes' }">
 			      <li class="nav-item" style="padding-left:100px">
-			        <a class="nav-link"  href="admin_logout.jsp">관리자로그아웃</a>
+			        <a class="nav-link"  href="admin_logout.jsp">관리자 로그아웃</a>
 			      </li>				
   				</c:when>
   				<c:otherwise>
 			      <li calss="nav-item" style="padding-left:100px">
-			      	<a class="nav-link"  href="admin_login.jsp">관리자페이지</a>
+			      	<a class="nav-link"  href="admin_login.jsp">관리자 페이지</a>
 			      </li>
   				</c:otherwise>
   			</c:choose>
@@ -377,11 +392,14 @@
 	    <div id="navbarResponsive6" class="panel-collapse navbar-nav collapse justify-content-center" style="background-color:#212529; width:100%">
 		   <!-- <div class="panel-body" style="min-height:100px; display:inline-block" id="detailedMenu"></div> -->
 		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active" style="padding-left:100px; font-size: 1.5em; color:white">
+		      	<b>팬션소식 <i class="fas fa-arrow-alt-circle-right"></i></b>
+		      </li>			    
 		      <li class="nav-item active" style="padding-left:100px">
-		        <a class="nav-link"  href="e_01.jsp">공지사항 게시판</span></a>
+		        <a class="nav-link"  href="e_01.jsp">공지사항</span></a>
 		      </li>
 		      <li class="nav-item" style="padding-left:100px">
-		        <a class="nav-link"  href="e_02.jsp">답글 게시판</a>
+		        <a class="nav-link"  href="e_02.jsp">Q & A</a>
 		      </li>
 		    </ul>		   		
 		</div>						      	
