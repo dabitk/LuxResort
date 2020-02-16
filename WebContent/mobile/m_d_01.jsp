@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri= "http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>    
-<%@ page import="java.util.*,java.io.*, java.text.SimpleDateFormat,java.net.URLEncoder,java.net.URLDecoder"%>    
+<%@ page import="java.util.*,java.io.*, java.text.SimpleDateFormat,java.net.URLEncoder,java.net.URLDecoder,com.resort.gongii.*,com.resort.reservation.*"%>    
 <!DOCTYPE html>
 <html lang="en">
 
@@ -112,7 +112,23 @@
 	body i {
 	font-family:'FontAwesome'!important;
 	}
+	.centered{
+	    background-image: url(../img/reserved.jpg);
+	    background-size: 100% 100%; 
+		text-align:center;
+	    color: white;
+	    font-size: 50px;
+	    min-height: 200px;
+    	padding-top: 50px;
+	}
 	
+	.gongii-list{
+
+	    table-layout: fixed;
+	    width: 100%;
+	    margin: 0;
+	    border-bottom: 1px solid #ceccc6;
+	}	
 	.sidenav {
 	  height: 100%;
 	  width: 0;
@@ -212,11 +228,7 @@
 			  	$('#navbarResponsive4').removeClass("show");
 			  	$('#navbarResponsive5').removeClass("show");			    
 			 });
-		  $('#checkin,#checkout').datepicker({
-			    format: 'yyyy-mm-dd',
-			    startDate: '-0d',
-			    endDate: '+14d'
-			});
+	
 	});	  
 	//function logout(res){
 	//	$.ajax({
@@ -229,6 +241,58 @@
 </head>
 
 <body id="page-top">
+<%
+	reservationDAO resv = reservationDAO.getInstance(); //싱글턴으로 객체 생성.
+	List<calendarVO> resv_list = new ArrayList<calendarVO>();
+	request.setCharacterEncoding("utf-8");
+	
+//	String[] holidayList = new String[]{
+//				"토","일","01-01","01-24","01-25","01-26",
+//				"03-01","04-30","05-05","06-06","08-15",
+//				"09-30","10-01","10-02","10-03","10-09",
+//				"12-25"
+//	};
+	
+	resv_list=resv.getBookingInfo();	//첫번째 행부터 15개를 DB로부터 가져온다
+	
+	String loginOK = (String)session.getAttribute("login_ok");
+	
+
+	if((loginOK!=null && !loginOK.equals("yes")) || loginOK == null && !resv_list.isEmpty()){
+		
+		//다음 조건에 해당 되었을 때 예약자 이름에 대해 전처리를 수행한다. 관리자 로그인시 풀네임 출력, 관리자 미로그인시 이름 중간에 * 출력.
+		//1. 관리자가 아닌 회원으로서 로그인 한 상태이면서 리스트가 비어있지 않는 경우
+		//2. 관리자 로그인 안되있으면서 리스트가 비어있지 않는 경우
+		
+		for(calendarVO a:resv_list){
+			if(!a.getRoom1().equals("예약가능")){ //이미 예약이 된 객실에 대해서만 전처리를 수행한다.
+				if(a.getRoom1().length() == 2){ //객실1의 예약명이 2글자 길이인 경우 ex) 예약자명: 전진 -> 전*
+					a.setRoom1(a.getRoom1().replace(a.getRoom1().charAt(1),'*'));
+				}else if(a.getRoom1().length() >= 3){//객실1의 예약명이 3글자 이상인 경우 첫글자와 마지막 글자를 제외한 글자를 *로 출력
+													 //ex) 예약자명: 김정후 -> 김*후, 앙드레김 -> 앙*김
+					a.setRoom1(a.getRoom1().replace(a.getRoom1().substring(1,a.getRoom1().length()-1),"*"));
+				}
+			}
+			if(!a.getRoom2().equals("예약가능")){
+				if(a.getRoom2().length() == 2){ //관리자 미로그인 시 객실2 예약명 전처리
+					a.setRoom2(a.getRoom2().replace(a.getRoom2().charAt(1),'*'));
+				}else if(a.getRoom2().length() >= 3){
+					a.setRoom2(a.getRoom2().replace(a.getRoom2().substring(1,a.getRoom2().length()-1),"*"));
+				}
+			}
+			if(!a.getRoom3().equals("예약가능")){
+				if(a.getRoom3().length() == 2){ //관리자 미로그인 시 객실3 예약명 전처리
+					a.setRoom1(a.getRoom3().replace(a.getRoom3().charAt(1),'*'));
+				}else if(a.getRoom3().length() >= 3){
+					a.setRoom3(a.getRoom3().replace(a.getRoom3().substring(1,a.getRoom3().length()-1),"*"));
+				}
+			}
+		}
+	}
+	
+	//pageContext.setAttribute("holidayList",holidayList);
+	pageContext.setAttribute("resv_list",resv_list); //페이지 컨텍스트에 list 속성을 지정한다
+%>
   <!-- Navigation -->
   <!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">-->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top shrink" id="mainNav">
@@ -265,7 +329,7 @@
 		  			</a>
   				</c:otherwise>
   			</c:choose></td>
-			<td width='25%'><a href="<%=request.getContextPath()%>/member_register.jsp">REGISTER</a></td>
+			<td width='25%'><a href="<%=request.getContextPath()%>/mobile/m_member_register.jsp">REGISTER</a></td>
 			<td width='25%'><a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
 	          </a>
@@ -318,10 +382,10 @@
           <li class="nav-item" style="min-width: 150px" id ="mkreservation" >
             <a class="nav-link js-scroll-trigger dropdown-toggle" id="dropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">예약하기</a>
           	  <div class="dropdown-menu" aria-labelledby="dropdown4">
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_01.jsp">예약 상황</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_01.jsp">예약 상황</a>  
 	            <div class="dropdown-divider"></div>
 	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_02.jsp">객실 예약</a>
-	            <div class="dropdown-divider"></div>
+	            <div class="dropdown-divider"></div>	
 	            <c:choose>
   				<c:when test="${sessionScope.login_ok eq 'yes' }">
 	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_admin_logout.jsp">관리자 로그아웃</a>			
@@ -354,212 +418,108 @@ function closeNav() {
 </script>
   </nav>
 
-  <!-- Header -->
-  <header class="masthead" style="margin-top:80px">
-  <div style="width:100%; height:100%">
-  <div class="room_Carousel">
-      <div class="row text-center">
-		<div id="myCarousel" class="carousel slide" data-ride="carousel" style="width:100%">
-		  <!-- Indicators -->
-		  <ol class="carousel-indicators">
-		    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-		    <li data-target="#myCarousel" data-slide-to="1"></li>
-		    <li data-target="#myCarousel" data-slide-to="2"></li>
-		  </ol>
-		
-		  <!-- Wrapper for slides -->
-		  <div class="carousel-inner">
-		    <div class="carousel-item active">
-		      <img src="../img/room/r8.jpg" style="width:100%">
-		      <div class="carousel-caption">
-		        <h3></h3>
-		        <p></p>
-		      </div>
-		    </div>
-		
-		    <div class="carousel-item">
-		      <img src="../img/room/standard3.jpg" style="width:100%">
-		      <div class="carousel-caption">
-		        <h3></h3>
-		        <p></p>
-		      </div>
-		    </div>
-		
-		    <div class="carousel-item">
-		      <img src="../img/room/standard4.jpg" style="width:100%">
-		      <div class="carousel-caption">
-		        <h3></h3>
-		        <p></p>
-		      </div>
-		    </div>
-		  </div>
-		
-		  <!-- Left and right controls -->
-		  <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
-		    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-		    <span class="sr-only">Previous</span>
-		  </a>
-		  <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
-		    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-		    <span class="sr-only">Next</span>
-		  </a>
-		</div>
-      </div>
-      <div class="container" style="position:relative;">
-        <div class="card check-availabilty rounded bg-secondary" style="padding:15px">
-          <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
-            <form action="<%=request.getContextPath()%>/d_02.jsp" method="POST">
-              <div class="row">
-                <div class="col-md-6 mb-3 mb-lg-0 col-lg-2" style="width:50%">
-                  <label for="checkin" class="font-weight-bold text-black"><i class="far fa-building"></i> 체크인</label>
-                  <div class="field-icon-wrap">
-                    <div class="icon"><span class="icon-calendar"></span></div>
-                    <input type="text" id="checkin" name="checkin" class="form-control" data-provide="datepicker" autocomplete="off" required>
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3 mb-lg-0 col-lg-2" style="width:50%">
-                  <label for="checkout" class="font-weight-bold text-black"><i class="far fa-building"></i> 체크아웃</label>
-                  <div class="field-icon-wrap">
-                    <div class="icon"><span class="icon-calendar"></span></div>
-                    <input type="text" id="checkout" name="checkout" class="form-control" data-provide="datepicker" autocomplete="off" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-              	<div class="mb-3 mb-lg-0 col-lg-3" style="width:56%">
-                      <label for="room" class="font-weight-bold text-black"><i class="fal fa-male"></i> 숙박실</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="room" id="room" class="form-control">
-                          <option value="2">로열 스위트</option>
-                        </select>
-                      </div>              	
-              	</div>                
-					<div style="display:flex; width:44%">
-                    <div class="mb-3 mb-md-0" style="width:50%">
-                      <label for="adults" class="font-weight-bold text-black"><i class="fal fa-male"></i> 성인</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="" id="adults" class="form-control">
-                          <option value="">1</option>
-                          <option value="">2</option>
-                          <option value="">3</option>
-                          <option value="">4+</option>
-                        </select>
-                      </div>
-                    </div>
-
-
-                    <div class="ml-3 mb-3 mr-3 mb-md-0" style="width:50%">
-                      <label for="children" class="font-weight-bold text-black"><i class="fal fa-male"></i> 아이</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="" id="children" class="form-control">
-                          <option value="">1</option>
-                          <option value="">2</option>
-                          <option value="">3</option>
-                          <option value="">4+</option>
-                        </select>
-                      </div>
-					</div>
-				</div>
-                </div>
-               </div>
-               <div class="row">
-                <div class="col-lg-3 align-self-end">
-                  <!-- <a href="d_02.jsp?room=1&checkin=2020-01-20" class="btn btn-primary btn-block text-white">예약하러 가기</a>-->
-                  <input type="submit" class="btn btn-primary btn-block text-whtie" value="예약하러 가기">
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>                
-    </div>        
-  </div>
-  </header>
-
   <!-- Services -->
   <section class="page-section" id="services">
+     
+    <div class="centered">
+    	<h1 style="margin-top:50px">예약현황</h1>
+    </div>
     <div class="container">
-       <div class="row">
-        <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" id="room_name">[ 로열 스위트 ]</h2>
-          <h3 class="section-subheading text-muted">
- 현대의 귀족이 된 기분을 맛볼 수 있는 우아하면서도 고풍스러운 인테리어.
- <br> 
- 흑요석으로 제작된 세련된 가구들과 천장의 화려한 샹들리에, 그리고 집무공간과 서재를 갖춘 집무실을 두어
- <br>
- 룸을 방문한 VIP가 편리하게 업무를 마칠 수 있도록 배려하고 있습니다.
- <br>
- VIP 룸의 욕실은 이탈리아 북부 알프스 천연 대리석으로 제작되어 고품격 휴식을 원하시는 분들께 최적의 선택입니다.</h3>
+      <div class="row">
+      	<div class="col-lg-12 text-center">
+      	<p>금일부터 30일간의 예약 현황을 알려드립니다. 원하시는 날짜와 객실을 선택해서 예약을 해주시기 바랍니다.<p>
+      	</div>
+        <div class="col-lg-12 text-center gongii-Board">        
+		<!-- 이곳에 공지사항 게시판을 추가한다. -->
+				<c:choose>
+					<c:when test="${!resv_list.isEmpty()}">
+						<table align=center style="width:100%" cellspacing=1 border=1>
+							<TR><TH class="calendr">일자</TH><TH class="room1">럭셔리 클럽 스위트</TH><TH class="room2">로열 스위트</TH><TH class="room3">프리미어 디럭스</TH></TR>
+							<c:forEach var="a" items="${resv_list}">
+							<TR>
+								<!-- room1, room2, room3은 예약가능일 때만 클릭이 가능 -->
+								<TD class="calendr">
+								<c:choose>
+									<c:when test="${fn:contains(a.calendr,'토')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'일')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'01-01')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'01-24')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'01-25')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'01-26')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'03-01')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'04-30')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'05-05')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'06-06')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'08-15')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'09-30')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'10-01')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'10-02')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'10-03')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'10-09')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>
+									<c:when test="${fn:contains(a.calendr,'12-25')}"><p style="color:red"><c:out value="${a.calendr}"/></p></c:when>		
+									<c:otherwise>
+										<p><c:out value="${a.calendr}"/></p>
+									</c:otherwise>
+								</c:choose>
+								</TD>
+								<c:choose>
+									<c:when test="${a.room1 ne '예약가능'}">
+										<!-- 관리자 로그인 되어있는 경우는 이름을 클릭해서 예약수정 페이지로 이동 가능 -->
+										<c:choose>
+											<c:when test="${sessionScope.login_ok eq 'yes' }">
+												<TD class="room1"><a href="<%=request.getContextPath()%>/admin_oneview.jsp?checkin=<c:out value='${a.calendr}'/>&room=1"><c:out value="${a.room1}"/></a></TD>
+											</c:when>
+											<c:otherwise>
+												<TD class="room1"><c:out value="${a.room1}"/></TD>
+											</c:otherwise>
+										</c:choose>
+									</c:when>									
+									<c:otherwise>
+										<TD class="room1"><a href="<%=request.getContextPath()%>/d_02.jsp?room=1&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room1}"/></a></TD>
+									</c:otherwise>								
+								</c:choose>
+								<c:choose>
+									<c:when test="${a.room2 ne '예약가능'}">
+										<!-- 관리자 로그인 되어있는 경우는 이름을 클릭해서 예약수정 페이지로 이동 가능 -->
+										<c:choose>
+											<c:when test="${sessionScope.login_ok eq 'yes' }">
+												<TD class="room2"><a href="<%=request.getContextPath()%>/admin_oneview.jsp?checkin=<c:out value='${a.calendr}'/>&room=2"><c:out value="${a.room2}"/></a></TD>
+											</c:when>
+											<c:otherwise>
+												<TD class="room2"><c:out value="${a.room2}"/></TD>
+											</c:otherwise>
+										</c:choose>
+									</c:when>
+									<c:otherwise>
+										<TD class="room2"><a href="<%=request.getContextPath()%>/d_02.jsp?room=2&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room2}"/></a></TD>
+									</c:otherwise>								
+								</c:choose>
+								<c:choose>
+									<c:when test="${a.room3 ne '예약가능'}">
+										<!-- 관리자 로그인 되어있는 경우는 이름을 클릭해서 예약수정 페이지로 이동 가능 -->
+										<c:choose>
+											<c:when test="${sessionScope.login_ok eq 'yes' }">
+												<TD class="room3"><a href="<%=request.getContextPath()%>/admin_oneview.jsp?checkin=<c:out value='${a.calendr}'/>&room=3"><c:out value="${a.room3}"/></a></TD>
+											</c:when>
+											<c:otherwise>
+												<TD class="room3"><c:out value="${a.room3}"/></TD>
+											</c:otherwise>
+										</c:choose>
+									</c:when>
+									<c:otherwise>
+										<TD class="room3"><a href="<%=request.getContextPath()%>/d_02.jsp?room=3&checkin=<c:out value='${a.calendr}'/>"><c:out value="${a.room3}"/></a></TD>
+									</c:otherwise>								
+								</c:choose>										
+							</TR>
+							</c:forEach>
+						</table>
+					</c:when>
+					<c:otherwise>
+						<%response.sendError(500); //만약 에러가 발생하여 예약현황 출력이 안되는 경우는 500에러를 발생시킴.%>
+					</c:otherwise>			
+				</c:choose>
         </div>
       </div>
-      <div class="row text-center">
-
-
-	  </div>
-    </div>
-  </section>
-
-  <!-- Portfolio Grid -->
-  <section class="bg-light page-section" id="portfolio">
-    <div class="container">
-       <div class="row">
-        <div class="col-lg-12 text-center" id="page_Spec">
-        		<h3>객실 개요</h3>
-				<table class="rwd-table">
-						<colgroup>
-							<col style="width: 20%">
-							<col style="width: 30%">
-							<col style="width: 20%">
-							<col style="width: 30%">
-						</colgroup>
-						<tbody>
-							<tr>
-								<th scope="col">체크인</th>
-								<td><div class="td-txt">15:00</div></td>
-								<th scope="col">체크아웃</th>
-								<td><div class="td-txt">11:00</div></td>
-							</tr>
-							<tr>
-								<th scope="col">기준 인원</th>
-								<td><div class="td-txt">2명</div></td>
-								<th scope="col">최대 인원</th>
-								<td><div class="td-txt">2명</div></td>
-							</tr>
-							<tr>
-								<th scope="col">객실 구성</th>
-								<td><div class="td-txt">침실 1, 거실 1, 다이닝룸, 욕실 1</div></td>
-								<th scope="col">객실 면적</th>
-								<td><div class="td-txt">245㎡</div></td>
-							</tr>
-							<tr>
-								<th scope="col">객실 수</th>
-								<td><div class="td-txt">1실</div></td>
-								<th scope="col"></th>
-								<td><div class="td-txt"></div></td>
-							</tr>
-						</tbody>
-				</table>
-      </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section class="page-section" id="about">
-    <div class="container">
-       <div class="row">
-        <div class="col-lg-12 text-center">
-          <!-- <h2 class="section-heading text-uppercase" style="width:24%">어메니티</h2>-->
-          <h3>어메니티</h3>
-		</div>
-      </div>  
-    </div>
-  </section>
-
-
     </div>
   </section>
 

@@ -212,11 +212,10 @@
 			  	$('#navbarResponsive4').removeClass("show");
 			  	$('#navbarResponsive5').removeClass("show");			    
 			 });
-		  $('#checkin,#checkout').datepicker({
-			    format: 'yyyy-mm-dd',
-			    startDate: '-0d',
-			    endDate: '+14d'
-			});
+		  $('.carousel').carousel({
+			  interval: 2000,
+			  pause:false
+			});		
 	});	  
 	//function logout(res){
 	//	$.ajax({
@@ -265,7 +264,7 @@
 		  			</a>
   				</c:otherwise>
   			</c:choose></td>
-			<td width='25%'><a href="<%=request.getContextPath()%>/member_register.jsp">REGISTER</a></td>
+			<td width='25%'><a href="<%=request.getContextPath()%>/mobile/m_member_register.jsp">REGISTER</a></td>
 			<td width='25%'><a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
 	          </a>
@@ -318,10 +317,10 @@
           <li class="nav-item" style="min-width: 150px" id ="mkreservation" >
             <a class="nav-link js-scroll-trigger dropdown-toggle" id="dropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">예약하기</a>
           	  <div class="dropdown-menu" aria-labelledby="dropdown4">
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_01.jsp">예약 상황</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_01.jsp">예약 상황</a>  
 	            <div class="dropdown-divider"></div>
 	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_02.jsp">객실 예약</a>
-	            <div class="dropdown-divider"></div>
+	            <div class="dropdown-divider"></div>	
 	            <c:choose>
   				<c:when test="${sessionScope.login_ok eq 'yes' }">
 	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_admin_logout.jsp">관리자 로그아웃</a>			
@@ -359,7 +358,7 @@ function closeNav() {
   <div style="width:100%; height:100%">
   <div class="room_Carousel">
       <div class="row text-center">
-		<div id="myCarousel" class="carousel slide" data-ride="carousel" style="width:100%">
+		<div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel" style="width:100%">
 		  <!-- Indicators -->
 		  <ol class="carousel-indicators">
 		    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -368,9 +367,9 @@ function closeNav() {
 		  </ol>
 		
 		  <!-- Wrapper for slides -->
-		  <div class="carousel-inner">
+		  <div class="carousel-inner" >
 		    <div class="carousel-item active">
-		      <img src="../img/room/r8.jpg" style="width:100%">
+		      <img src="../img/facilities/eventhall1.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -378,7 +377,7 @@ function closeNav() {
 		    </div>
 		
 		    <div class="carousel-item">
-		      <img src="../img/room/standard3.jpg" style="width:100%">
+		      <img src="../img/facilities/eventhall2.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -386,7 +385,7 @@ function closeNav() {
 		    </div>
 		
 		    <div class="carousel-item">
-		      <img src="../img/room/standard4.jpg" style="width:100%">
+		      <img src="../img/facilities/eventhall3.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -405,77 +404,8 @@ function closeNav() {
 		  </a>
 		</div>
       </div>
-      <div class="container" style="position:relative;">
-        <div class="card check-availabilty rounded bg-secondary" style="padding:15px">
-          <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
-            <form action="<%=request.getContextPath()%>/d_02.jsp" method="POST">
-              <div class="row">
-                <div class="col-md-6 mb-3 mb-lg-0 col-lg-2" style="width:50%">
-                  <label for="checkin" class="font-weight-bold text-black"><i class="far fa-building"></i> 체크인</label>
-                  <div class="field-icon-wrap">
-                    <div class="icon"><span class="icon-calendar"></span></div>
-                    <input type="text" id="checkin" name="checkin" class="form-control" data-provide="datepicker" autocomplete="off" required>
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3 mb-lg-0 col-lg-2" style="width:50%">
-                  <label for="checkout" class="font-weight-bold text-black"><i class="far fa-building"></i> 체크아웃</label>
-                  <div class="field-icon-wrap">
-                    <div class="icon"><span class="icon-calendar"></span></div>
-                    <input type="text" id="checkout" name="checkout" class="form-control" data-provide="datepicker" autocomplete="off" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-              	<div class="mb-3 mb-lg-0 col-lg-3" style="width:56%">
-                      <label for="room" class="font-weight-bold text-black"><i class="fal fa-male"></i> 숙박실</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="room" id="room" class="form-control">
-                          <option value="2">로열 스위트</option>
-                        </select>
-                      </div>              	
-              	</div>                
-					<div style="display:flex; width:44%">
-                    <div class="mb-3 mb-md-0" style="width:50%">
-                      <label for="adults" class="font-weight-bold text-black"><i class="fal fa-male"></i> 성인</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="" id="adults" class="form-control">
-                          <option value="">1</option>
-                          <option value="">2</option>
-                          <option value="">3</option>
-                          <option value="">4+</option>
-                        </select>
-                      </div>
-                    </div>
 
-
-                    <div class="ml-3 mb-3 mr-3 mb-md-0" style="width:50%">
-                      <label for="children" class="font-weight-bold text-black"><i class="fal fa-male"></i> 아이</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="" id="children" class="form-control">
-                          <option value="">1</option>
-                          <option value="">2</option>
-                          <option value="">3</option>
-                          <option value="">4+</option>
-                        </select>
-                      </div>
-					</div>
-				</div>
-                </div>
-               </div>
-               <div class="row">
-                <div class="col-lg-3 align-self-end">
-                  <!-- <a href="d_02.jsp?room=1&checkin=2020-01-20" class="btn btn-primary btn-block text-white">예약하러 가기</a>-->
-                  <input type="submit" class="btn btn-primary btn-block text-whtie" value="예약하러 가기">
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>                
-    </div>        
+  </div>    
   </div>
   </header>
 
@@ -484,21 +414,18 @@ function closeNav() {
     <div class="container">
        <div class="row">
         <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" id="room_name">[ 로열 스위트 ]</h2>
+          <h2 class="section-heading text-uppercase" id="room_name">[ 대연회장 ]</h2>
           <h3 class="section-subheading text-muted">
- 현대의 귀족이 된 기분을 맛볼 수 있는 우아하면서도 고풍스러운 인테리어.
- <br> 
- 흑요석으로 제작된 세련된 가구들과 천장의 화려한 샹들리에, 그리고 집무공간과 서재를 갖춘 집무실을 두어
- <br>
- 룸을 방문한 VIP가 편리하게 업무를 마칠 수 있도록 배려하고 있습니다.
- <br>
- VIP 룸의 욕실은 이탈리아 북부 알프스 천연 대리석으로 제작되어 고품격 휴식을 원하시는 분들께 최적의 선택입니다.</h3>
+			대연회장은 300명 규모의 중형 웨딩부터 700명 규모의 대형 웨딩까지 다양하게
+			<br>
+			연출이 가능한 최적의 공간입니다.
+			</h3>
         </div>
       </div>
       <div class="row text-center">
+		
 
-
-	  </div>
+      </div>
     </div>
   </section>
 
@@ -506,8 +433,8 @@ function closeNav() {
   <section class="bg-light page-section" id="portfolio">
     <div class="container">
        <div class="row">
-        <div class="col-lg-12 text-center" id="page_Spec">
-        		<h3>객실 개요</h3>
+        <div class="col-lg-12 text-center">
+        		<h3>서비스 개요</h3>
 				<table class="rwd-table">
 						<colgroup>
 							<col style="width: 20%">
@@ -517,45 +444,22 @@ function closeNav() {
 						</colgroup>
 						<tbody>
 							<tr>
-								<th scope="col">체크인</th>
-								<td><div class="td-txt">15:00</div></td>
-								<th scope="col">체크아웃</th>
-								<td><div class="td-txt">11:00</div></td>
+								<th scope="col">운영시간</th>
+								<td><div class="td-txt"><br>금~일요일 09:00~17:00</div></td>
+								<th scope="col">예약 및 문의</th>
+								<td><div class="td-txt">Tel)xx-xxxx-xxxx</div></td>
 							</tr>
 							<tr>
-								<th scope="col">기준 인원</th>
-								<td><div class="td-txt">2명</div></td>
-								<th scope="col">최대 인원</th>
-								<td><div class="td-txt">2명</div></td>
-							</tr>
-							<tr>
-								<th scope="col">객실 구성</th>
-								<td><div class="td-txt">침실 1, 거실 1, 다이닝룸, 욕실 1</div></td>
-								<th scope="col">객실 면적</th>
-								<td><div class="td-txt">245㎡</div></td>
-							</tr>
-							<tr>
-								<th scope="col">객실 수</th>
-								<td><div class="td-txt">1실</div></td>
-								<th scope="col"></th>
-								<td><div class="td-txt"></div></td>
+								<th scope="col">수용인원</th>
+								<td><div class="td-txt">700명</div></td>
+								<th scope="col">크기</th>
+								<td><div class="td-txt">560㎡</div></td>
 							</tr>
 						</tbody>
 				</table>
+        </div>
       </div>
       </div>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section class="page-section" id="about">
-    <div class="container">
-       <div class="row">
-        <div class="col-lg-12 text-center">
-          <!-- <h2 class="section-heading text-uppercase" style="width:24%">어메니티</h2>-->
-          <h3>어메니티</h3>
-		</div>
-      </div>  
     </div>
   </section>
 

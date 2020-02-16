@@ -228,7 +228,7 @@
   </script>
 </head>
 
-<body id="page-top" onload="initTmap()">
+<body id="page-top">
   <!-- Navigation -->
   <!-- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">-->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top shrink" id="mainNav">
@@ -254,18 +254,18 @@
 			<td width='25%'><a href="m_index.jsp">HOME</a></td>
 			<td width='25%'>  			<!-- 로그인 여부에 따라 LOG IN 버튼 또는 LOG OUT 버튼이 보이게 한다 -->
   			<c:choose>
-  				<c:when test="${sessionScope.login_ok eq 'yes_member' }">
-		  			<a href="<%=request.getContextPath()%>/member_logout.jsp">
+  				<c:when test="${sessionScope.login_ok eq 'yes_member' || sessionScope.login_ok eq 'yes'}">
+		  			<a href="<%=request.getContextPath()%>/mobile/m_member_logout.jsp">
 		  				LOG OUT
 		  			</a>  				
   				</c:when>
   				<c:otherwise>
-  					<a href="<%=request.getContextPath()%>/member_login.jsp">
+  					<a href="<%=request.getContextPath()%>/mobile/m_member_login.jsp">
 		  				LOG IN
 		  			</a>
   				</c:otherwise>
   			</c:choose></td>
-			<td width='25%'><a href="<%=request.getContextPath()%>/member_register.jsp">REGISTER</a></td>
+			<td width='25%'><a href="<%=request.getContextPath()%>/mobile/m_member_register.jsp">REGISTER</a></td>
 			<td width='25%'><a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
 	          </a>
@@ -290,47 +290,54 @@
           	  <div class="dropdown-menu" aria-labelledby="dropdown1">
 	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_a_01.jsp">럭셔리 클럽 스위트</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/a_02.jsp">로열 스위트</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_a_02.jsp">로열 스위트</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/a_03.jsp">프리미어 디럭스</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_a_03.jsp">프리미어 디럭스</a>
 	          </div>
           </li>         
           <li class="nav-item" style="min-width: 150px" id = "findhere" >
             <a class="nav-link js-scroll-trigger dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">다이닝</a>
           	  <div class="dropdown-menu" aria-labelledby="dropdown2">
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/b_01.jsp">레스토랑</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_b_01.jsp">레스토랑</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/b_02.jsp">바&라운지</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_b_02.jsp">바&라운지</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/b_03.jsp">베이커리</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_b_03.jsp">베이커리</a>
 	          </div>            
           </li>
           <li class="nav-item" style="min-width: 150px" id="toursite" >
             <a class="nav-link js-scroll-trigger dropdown-toggle" id="dropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">부대시설</a>
           	  <div class="dropdown-menu" aria-labelledby="dropdown3">
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/c_01.jsp">스쿠버다이빙 체험</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_c_01.jsp">스쿠버다이빙 체험</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/c_02.jsp">스파</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_c_02.jsp">스파</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/c_03.jsp">대연회장</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_c_03.jsp">대연회장</a>
 	          </div>            
           </li>
           <li class="nav-item" style="min-width: 150px" id ="mkreservation" >
             <a class="nav-link js-scroll-trigger dropdown-toggle" id="dropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">예약하기</a>
           	  <div class="dropdown-menu" aria-labelledby="dropdown4">
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/d_01.jsp">예약상황</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_01.jsp">예약 상황</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/admin_login.jsp">관리자페이지</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_02.jsp">객실 예약</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/admin_logout.jsp">관리자로그아웃</a>
+	            <c:choose>
+  				<c:when test="${sessionScope.login_ok eq 'yes' }">
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_admin_logout.jsp">관리자 로그아웃</a>			
+  				</c:when>
+  				<c:otherwise>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_admin_login_form.jsp">관리자 페이지</a>
+  				</c:otherwise>
+  				</c:choose>
 	          </div>            
           </li>
           <li class="nav-item" style="min-width: 150px" id="notice" >
             <a class="nav-link js-scroll-trigger dropdown-toggle" id="dropdown5" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">팬션소식</a>
           	  <div class="dropdown-menu" aria-labelledby="dropdown5">
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/e_01.jsp">공지사항</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_e_01.jsp">공지사항</a>
 	            <div class="dropdown-divider"></div>
-	            <a class="dropdown-item" href="<%=request.getContextPath()%>/e_02.jsp">Q & A</a>
+	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_e_02.jsp">Q & A</a>
 	          </div>            
           </li>
         </ul>    

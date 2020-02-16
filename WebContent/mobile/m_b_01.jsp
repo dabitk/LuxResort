@@ -212,11 +212,10 @@
 			  	$('#navbarResponsive4').removeClass("show");
 			  	$('#navbarResponsive5').removeClass("show");			    
 			 });
-		  $('#checkin,#checkout').datepicker({
-			    format: 'yyyy-mm-dd',
-			    startDate: '-0d',
-			    endDate: '+14d'
-			});
+		  $('.carousel').carousel({
+			  interval: 2000,
+			  pause:false
+			});		
 	});	  
 	//function logout(res){
 	//	$.ajax({
@@ -265,7 +264,7 @@
 		  			</a>
   				</c:otherwise>
   			</c:choose></td>
-			<td width='25%'><a href="<%=request.getContextPath()%>/member_register.jsp">REGISTER</a></td>
+			<td width='25%'><a href="<%=request.getContextPath()%>/mobile/m_member_register.jsp">REGISTER</a></td>
 			<td width='25%'><a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	            <i class="fas fa-globe"></i> KOR
 	          </a>
@@ -321,7 +320,7 @@
 	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_01.jsp">예약 상황</a>
 	            <div class="dropdown-divider"></div>
 	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_d_02.jsp">객실 예약</a>
-	            <div class="dropdown-divider"></div>
+	            <div class="dropdown-divider"></div>	            
 	            <c:choose>
   				<c:when test="${sessionScope.login_ok eq 'yes' }">
 	            <a class="dropdown-item" href="<%=request.getContextPath()%>/mobile/m_admin_logout.jsp">관리자 로그아웃</a>			
@@ -359,7 +358,7 @@ function closeNav() {
   <div style="width:100%; height:100%">
   <div class="room_Carousel">
       <div class="row text-center">
-		<div id="myCarousel" class="carousel slide" data-ride="carousel" style="width:100%">
+		<div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel" style="width:100%">
 		  <!-- Indicators -->
 		  <ol class="carousel-indicators">
 		    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -368,9 +367,9 @@ function closeNav() {
 		  </ol>
 		
 		  <!-- Wrapper for slides -->
-		  <div class="carousel-inner">
+		  <div class="carousel-inner" >
 		    <div class="carousel-item active">
-		      <img src="../img/room/r8.jpg" style="width:100%">
+		      <img src="../img/food/food1.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -378,7 +377,7 @@ function closeNav() {
 		    </div>
 		
 		    <div class="carousel-item">
-		      <img src="../img/room/standard3.jpg" style="width:100%">
+		      <img src="../img/food/food2.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -386,7 +385,7 @@ function closeNav() {
 		    </div>
 		
 		    <div class="carousel-item">
-		      <img src="../img/room/standard4.jpg" style="width:100%">
+		      <img src="../img/food/food3.jpg" style="width:100%">
 		      <div class="carousel-caption">
 		        <h3></h3>
 		        <p></p>
@@ -405,77 +404,8 @@ function closeNav() {
 		  </a>
 		</div>
       </div>
-      <div class="container" style="position:relative;">
-        <div class="card check-availabilty rounded bg-secondary" style="padding:15px">
-          <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
-            <form action="<%=request.getContextPath()%>/d_02.jsp" method="POST">
-              <div class="row">
-                <div class="col-md-6 mb-3 mb-lg-0 col-lg-2" style="width:50%">
-                  <label for="checkin" class="font-weight-bold text-black"><i class="far fa-building"></i> 체크인</label>
-                  <div class="field-icon-wrap">
-                    <div class="icon"><span class="icon-calendar"></span></div>
-                    <input type="text" id="checkin" name="checkin" class="form-control" data-provide="datepicker" autocomplete="off" required>
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3 mb-lg-0 col-lg-2" style="width:50%">
-                  <label for="checkout" class="font-weight-bold text-black"><i class="far fa-building"></i> 체크아웃</label>
-                  <div class="field-icon-wrap">
-                    <div class="icon"><span class="icon-calendar"></span></div>
-                    <input type="text" id="checkout" name="checkout" class="form-control" data-provide="datepicker" autocomplete="off" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-              	<div class="mb-3 mb-lg-0 col-lg-3" style="width:56%">
-                      <label for="room" class="font-weight-bold text-black"><i class="fal fa-male"></i> 숙박실</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="room" id="room" class="form-control">
-                          <option value="2">로열 스위트</option>
-                        </select>
-                      </div>              	
-              	</div>                
-					<div style="display:flex; width:44%">
-                    <div class="mb-3 mb-md-0" style="width:50%">
-                      <label for="adults" class="font-weight-bold text-black"><i class="fal fa-male"></i> 성인</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="" id="adults" class="form-control">
-                          <option value="">1</option>
-                          <option value="">2</option>
-                          <option value="">3</option>
-                          <option value="">4+</option>
-                        </select>
-                      </div>
-                    </div>
 
-
-                    <div class="ml-3 mb-3 mr-3 mb-md-0" style="width:50%">
-                      <label for="children" class="font-weight-bold text-black"><i class="fal fa-male"></i> 아이</label>
-                      <div class="field-icon-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="" id="children" class="form-control">
-                          <option value="">1</option>
-                          <option value="">2</option>
-                          <option value="">3</option>
-                          <option value="">4+</option>
-                        </select>
-                      </div>
-					</div>
-				</div>
-                </div>
-               </div>
-               <div class="row">
-                <div class="col-lg-3 align-self-end">
-                  <!-- <a href="d_02.jsp?room=1&checkin=2020-01-20" class="btn btn-primary btn-block text-white">예약하러 가기</a>-->
-                  <input type="submit" class="btn btn-primary btn-block text-whtie" value="예약하러 가기">
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>                
-    </div>        
+  </div>    
   </div>
   </header>
 
@@ -484,15 +414,18 @@ function closeNav() {
     <div class="container">
        <div class="row">
         <div class="col-lg-12 text-center">
-          <h2 class="section-heading text-uppercase" id="room_name">[ 로열 스위트 ]</h2>
+          <h2 class="section-heading text-uppercase" id="room_name">[ 럭셔리 레스토랑 ]</h2>
           <h3 class="section-subheading text-muted">
- 현대의 귀족이 된 기분을 맛볼 수 있는 우아하면서도 고풍스러운 인테리어.
- <br> 
- 흑요석으로 제작된 세련된 가구들과 천장의 화려한 샹들리에, 그리고 집무공간과 서재를 갖춘 집무실을 두어
- <br>
- 룸을 방문한 VIP가 편리하게 업무를 마칠 수 있도록 배려하고 있습니다.
- <br>
- VIP 룸의 욕실은 이탈리아 북부 알프스 천연 대리석으로 제작되어 고품격 휴식을 원하시는 분들께 최적의 선택입니다.</h3>
+			우아한 실내장식과 부드러운 조명, 전문적이고 세심한 직원 서비스 또한
+			<br>
+			소중한 사람과의 특별한 만남을 더욱 빛나게 합니다.
+			<br>
+			럭셔리 레스토랑은 에메랄드빛 바다 전경과 함께 최상의 프렌치 정찬을 즐길 수 있는
+			<br>
+			프렌치 레스토랑입니다.
+			국내 및 세계 각국에서 공수한 건강하고 신선한 제철 식자재 및 미쉐린 3성 스타 쉐프의 끊임없는
+			<br>
+			연구를 기반으로 현대적이고도 독창적으로 구현한 정통 프렌치를 선보입니다.</h3>
         </div>
       </div>
       <div class="row text-center">
@@ -506,8 +439,8 @@ function closeNav() {
   <section class="bg-light page-section" id="portfolio">
     <div class="container">
        <div class="row">
-        <div class="col-lg-12 text-center" id="page_Spec">
-        		<h3>객실 개요</h3>
+        <div class="col-lg-12 text-center">
+        		<h3>시설 개요</h3>
 				<table class="rwd-table">
 						<colgroup>
 							<col style="width: 20%">
@@ -517,45 +450,22 @@ function closeNav() {
 						</colgroup>
 						<tbody>
 							<tr>
-								<th scope="col">체크인</th>
-								<td><div class="td-txt">15:00</div></td>
-								<th scope="col">체크아웃</th>
-								<td><div class="td-txt">11:00</div></td>
+								<th scope="col">이용시간</th>
+								<td><div class="td-txt">점심 12:00~15:00<br>저녁 18:00~22:00</div></td>
+								<th scope="col">타입</th>
+								<td><div class="td-txt">트레디셔널 프렌치</div></td>
 							</tr>
 							<tr>
-								<th scope="col">기준 인원</th>
-								<td><div class="td-txt">2명</div></td>
-								<th scope="col">최대 인원</th>
-								<td><div class="td-txt">2명</div></td>
-							</tr>
-							<tr>
-								<th scope="col">객실 구성</th>
-								<td><div class="td-txt">침실 1, 거실 1, 다이닝룸, 욕실 1</div></td>
-								<th scope="col">객실 면적</th>
-								<td><div class="td-txt">245㎡</div></td>
-							</tr>
-							<tr>
-								<th scope="col">객실 수</th>
-								<td><div class="td-txt">1실</div></td>
-								<th scope="col"></th>
-								<td><div class="td-txt"></div></td>
+								<th scope="col">좌석수</th>
+								<td><div class="td-txt">36석</div></td>
+								<th scope="col">예약 및 문의</th>
+								<td><div class="td-txt">Tel)xx-xxxx-xxxx</div></td>
 							</tr>
 						</tbody>
 				</table>
+        </div>
       </div>
       </div>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section class="page-section" id="about">
-    <div class="container">
-       <div class="row">
-        <div class="col-lg-12 text-center">
-          <!-- <h2 class="section-heading text-uppercase" style="width:24%">어메니티</h2>-->
-          <h3>어메니티</h3>
-		</div>
-      </div>  
     </div>
   </section>
 
