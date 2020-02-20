@@ -54,3 +54,4 @@ Hierarchical BBS:
 
 8. 게시글 조회시 CKEditor 안보이게 하였음. 수정페이지에서는 보임. <br/>
 
+![alt text](https://github.com/dabitk/LuxResort/blob/master/fix1.jpg "fix")
