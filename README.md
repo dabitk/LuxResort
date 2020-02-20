@@ -1,5 +1,5 @@
 # LuxResort
-A full-stack website development for self-educational purpose. last update 02/19/2020
+A full-stack website development for self-educational purpose. last update 02/20/2020
 
 Home page (Desktop): 
 ![alt text](https://github.com/dabitk/LuxResort/blob/master/main_page.gif "Main Page")
