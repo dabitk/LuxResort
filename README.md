@@ -4,7 +4,7 @@ A full-stack website development for self-educational purpose. last update 02/20
 02/16/2020 수정 사항 :
 1. datepicker에서 체크아웃 날짜가 체크인 날짜보다 이전 날짜를 선택할 수 없도록 수정.
 
-2. 예약하기 폼 UI 변경 및 기능 수정 
+2. 예약하기 폼 UI 변경 및 기능 수정 /
 	2-1. 이름은 한글과 영어만 입력가능. 최소 2글자 이상 6글자 이하만 입력가능.
 	2-2. 체크인 날짜/체크아웃 날짜 설정 가능.
 	2-3. select 박스로 객실1, 객실2, 객실3 선택 및 변경 가능.
