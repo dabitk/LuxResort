@@ -26,6 +26,10 @@ Reservation system(new):
 Reservation system(old):
 ![alt text](https://github.com/dabitk/LuxResort/blob/master/reservation_system.gif "Reservation System2")
 
+Hierarchical BBS:
+![alt text](https://github.com/dabitk/LuxResort/blob/master/hierarchical_bbs.gif "Bbs")
+
+
 02/16/2020 수정 사항 :
 1. datepicker에서 체크아웃 날짜가 체크인 날짜보다 이전 날짜를 선택할 수 없도록 수정.
 
@@ -50,6 +54,3 @@ Reservation system(old):
 
 8. 게시글 조회시 CKEditor 안보이게 하였음. 수정페이지에서는 보임. <br/>
 
-
-Hierarchical BBS:
-![alt text](https://github.com/dabitk/LuxResort/blob/master/hierarchical_bbs.gif "Bbs")
